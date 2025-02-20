@@ -4,6 +4,7 @@ import { userAuth } from '../middlewares/userAuth.middleware.js';
 
 const authRouter = express.Router();
 
+// auth
 authRouter.post('/register', register);
 authRouter.post('/login', login);
 authRouter.post('/logout', userAuth, logout);
@@ -13,6 +14,8 @@ authRouter.post('/verify-email', userAuth, verifyEmail);
 authRouter.post('/is-auth', userAuth, isUserAuthenticated)
 authRouter.post('/sent-reset-otp', sendResetOtp);
 authRouter.post('/reset-password', resetPassword);
+// user data
+
 
 
 
