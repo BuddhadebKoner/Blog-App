@@ -41,8 +41,6 @@ export const deleteFromCloudinary = async (publicId) => {
    }
 };
 
-
-
 export { uploadOnCloudinary };
 
 // Basic and documentation way to upload image on cloudinary

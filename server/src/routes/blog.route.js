@@ -1,17 +1,15 @@
 import express from 'express';
-import { createBlog, deleteBlog, getBlogById, getBlogs, updateBlog } from '../controllers/blog.controller';
-import { userAuth } from '../middlewares/userAuth.middleware';
-import { upload } from '../middlewares/multer.midleware';
+import { createBlog, deleteBlog, getBlogById, getBlogs, updateBlog } from '../controllers/blog.controller.js';
+import { userAuth } from '../middlewares/userAuth.middleware.js';
 import fs from 'fs';
+import { upload } from '../middlewares/multer.midleware.js';
 
 const blogRoute = express.Router();
 
-blogRoute.get('/get-all-blogs', getBlogs);
-blogRoute.get('/get-blog-by-id/:slugParam', getBlogById);
 blogRoute.post('/create-blog', userAuth, (req, res, next) => {
    try {
       upload.fields([
-         { name: "image", maxCount: 1 }
+         { name: "blogImage", maxCount: 1 }
       ])(req, res, (err) => {
          if (err) {
             console.error("Error during file upload:", err);
@@ -26,10 +24,10 @@ blogRoute.post('/create-blog', userAuth, (req, res, next) => {
       res.status(500).send({ error: "An unexpected error occurred" });
    }
 }, createBlog);
-blogRoute.put('/update-blog/:slugParam', userAuth, (req, res) => {
+blogRoute.put('/update-blog/:slugParam', userAuth, (req, res, next) => {
    try {
       upload.fields([
-         { name: "image", maxCount: 1 }
+         { name: "blogImage", maxCount: 1 }
       ])(req, res, (err) => {
          if (err) {
             console.error("Error during file upload:", err);
@@ -43,7 +41,10 @@ blogRoute.put('/update-blog/:slugParam', userAuth, (req, res) => {
       fs.appendFileSync("error.log", `Unexpected error: ${error}\n`);
       res.status(500).send({ error: "An unexpected error occurred" });
    }
- }, updateBlog);
+}, updateBlog);
+
+blogRoute.get('/get-all-blogs', getBlogs);
+blogRoute.get('/get-blog-by-id/:slugParam', getBlogById);
 blogRoute.delete('/delete-blog/:slugParam', userAuth, deleteBlog);
 
 export default blogRoute;
