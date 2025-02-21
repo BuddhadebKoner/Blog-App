@@ -3,8 +3,9 @@ import cors from "cors";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import connectDB from "./src/config/db.js";
-import authRouter from "./src/routes/user.route.js"
 import blogRoute from "./src/routes/blog.route.js";
+import authRouter from "./src/routes/auth.route.js";
+import userRouter from "./src/routes/user.route.js";
 
 dotenv.config();
 
@@ -25,6 +26,8 @@ app.get('/', (req, res) => {
 app.use('/api/auth', authRouter)
 // for blogs
 app.use('/api/blog', blogRoute);
+// for user data
+app.use('/api/user', userRouter);
 
 app.listen(port, () => {
    console.log(`server is running on PORT http://localhost:${port}/`);
