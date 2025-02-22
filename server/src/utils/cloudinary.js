@@ -17,7 +17,8 @@ const uploadOnCloudinary = async (localFilePath) => {
          resource_type: "auto",
          folder: process.env.CLOUDINARY_FOLDER_NAME,
       });
-
+   
+      // unlick public/temp folder all files
       fs.unlinkSync(localFilePath);
 
       return response;

@@ -1,5 +1,5 @@
 import { UserAuth } from "../models/user.model.js";
-import { uploadOnCloudinary, deleteFromCloudinary } from "../utils/cloudinary.js";
+import { deleteFromCloudinary, uploadOnCloudinary } from "../utils/cloudinary.js";
 
 // get user data by id
 export const getUserById = async (req, res) => {

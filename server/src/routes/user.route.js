@@ -1,14 +1,25 @@
-import express from 'express';
-import { getUserById, updateUserById } from '../controllers/user.controller.js';
+import express from 'express'
+import { isUserAuthenticated, login, logout, register, resetPassword, sendResetOtp, sendVarifyOtp, verifyEmail } from '../controllers/auth.controller.js';
 import { userAuth } from '../middlewares/userAuth.middleware.js';
-import { upload } from '../middlewares/multer.midleware.js';
+import { getUserById, updateUserById } from '../controllers/user.controller.js';
 import fs from 'fs';
+import { upload } from '../middlewares/multer.midleware.js';
 
+const authRouter = express.Router();
 
-const userRouter = express.Router();
-
-userRouter.get('/get-user', userAuth, getUserById);
-userRouter.put('/update-user', userAuth, (req, res, next) => {
+// auth
+authRouter.post('/register', register);
+authRouter.post('/login', login);
+authRouter.post('/logout', userAuth, logout);
+// otp
+authRouter.post('/send-verify-otp', userAuth, sendVarifyOtp);
+authRouter.post('/verify-email', userAuth, verifyEmail);
+authRouter.post('/is-auth', userAuth, isUserAuthenticated)
+authRouter.post('/sent-reset-otp', sendResetOtp);
+authRouter.post('/reset-password', resetPassword);
+// user data
+authRouter.get('/get-user', userAuth, getUserById);
+authRouter.put('/update-user', userAuth, (req, res, next) => {
    try {
       upload.fields([
          { name: "userImage", maxCount: 1 }
@@ -27,4 +38,7 @@ userRouter.put('/update-user', userAuth, (req, res, next) => {
    }
 }, updateUserById);
 
-export default userRouter;
+
+
+
+export default authRouter

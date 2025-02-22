@@ -1,6 +1,7 @@
 import Blog from "../models/blogs.model.js";
 import { UserAuth } from "../models/user.model.js";
 import { deleteFromCloudinary, uploadOnCloudinary } from "../utils/cloudinary.js";
+import fs from "fs";
 
 // get all blogs infinite scroll
 export const getBlogs = async (req, res) => {
@@ -83,8 +84,10 @@ export const getBlogById = async (req, res) => {
 export const createBlog = async (req, res) => {
    try {
       const { author, title, videoLink, readTime, slugParam, content } = req.body;
+      const blogImage = req.files?.blogImage?.[0]?.path;
 
       if (!author || !title || !videoLink || !readTime || !slugParam || !content) {
+         fs.unlinkSync(blogImage);
          return res.status(400).json({
             success: false,
             message: "All fields are required."
@@ -96,12 +99,14 @@ export const createBlog = async (req, res) => {
       try {
          parsedContent = JSON.parse(content);
          if (!Array.isArray(parsedContent) || parsedContent.some(item => !item.type || !item.value)) {
+            fs.unlinkSync(blogImage);
             return res.status(400).json({
                success: false,
                message: "Invalid content format."
             });
          }
       } catch (err) {
+         fs.unlinkSync(blogImage);
          return res.status(400).json({
             success: false,
             message: "Content must be a valid JSON array."
@@ -111,6 +116,7 @@ export const createBlog = async (req, res) => {
       // Check if slug exists
       const isExists = await Blog.findOne({ slugParam });
       if (isExists) {
+         fs.unlinkSync(blogImage);
          return res.status(400).json({
             success: false,
             message: "Slug already exists. Enter a unique slug.",
@@ -120,6 +126,7 @@ export const createBlog = async (req, res) => {
       // Check if author exists
       const isUserExists = await UserAuth.findById(author);
       if (!isUserExists) {
+         fs.unlinkSync(blogImage);
          return res.status(404).json({
             success: false,
             message: "Author not found.",
@@ -127,8 +134,8 @@ export const createBlog = async (req, res) => {
       }
 
       // Validate and process image
-      const blogImage = req.files?.blogImage?.[0]?.path;
       if (!blogImage) {
+         fs.unlinkSync(blogImage);
          return res.status(400).json({
             success: false,
             message: "Image is required."
@@ -137,6 +144,7 @@ export const createBlog = async (req, res) => {
 
       const image = await uploadOnCloudinary(blogImage);
       if (!image.url) {
+         fs.unlinkSync(blogImage);
          return res.status(400).json({
             success: false,
             message: "Image upload failed."
