@@ -5,6 +5,8 @@ import transporter from "../config/nodemailer.js";
 import dotenv from 'dotenv';
 dotenv.config();
 
+
+// Register User & Send OTP
 export const register = async (req, res) => {
    try {
       const { name, email, password } = req.body;
@@ -12,12 +14,11 @@ export const register = async (req, res) => {
       if (!name || !email || !password) {
          return res.status(400).json({
             success: false,
-            message: "Required field can't be empty!"
+            message: "Required fields can't be empty!"
          });
       }
 
       const existUser = await UserAuth.findOne({ email });
-
       if (existUser) {
          return res.status(400).json({
             success: false,
@@ -25,12 +26,17 @@ export const register = async (req, res) => {
          });
       }
 
-      const hashedPassword = await bcrypt.hash(password, 10);
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
+
+      const otp = String(Math.floor(100000 + Math.random() * 900000)); 
 
       const newUser = await UserAuth.create({
          name,
          email,
-         password: hashedPassword
+         password: hashedPassword,
+         otp,
+         otpExpires: Date.now() + 5 * 60 * 1000 
       });
 
       if (!newUser) {
@@ -40,29 +46,23 @@ export const register = async (req, res) => {
          });
       }
 
-      const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE });
-
-      res.cookie('token', token, {
-         httpOnly: true,
-         secure: process.env.CURRENT_STATUS === 'production',
-         sameSite: process.env.CURRENT_STATUS === 'production' ? 'none' : 'strict',
-         maxAge: 7 * 24 * 60 * 60 * 1000,
-      });
-
-      // semdimg email
+      // Send OTP via email
       const mailOptions = {
          from: process.env.SENDER_EMAIL,
          to: email,
-         subject: "Test Email",
-         text: "This is a test email from Nodemailer."
+         subject: "Verify Your Account",
+         text: `Your OTP is ${otp}`
       };
 
       await transporter.sendMail(mailOptions);
 
       return res.status(201).json({
          success: true,
-         message: "User created successfully",
-         data: newUser
+         message: "OTP sent for verification. Please check your email.",
+         data: {
+            userID: newUser._id,
+            email: newUser.email
+         }
       });
    } catch (error) {
       return res.status(500).json({
@@ -71,6 +71,7 @@ export const register = async (req, res) => {
       });
    }
 };
+
 
 export const login = async (req, res) => {
    try {
@@ -236,7 +237,16 @@ export const verifyEmail = async (req, res) => {
 
       return res.status(200).json({
          success: true,
-         message: "Email verified successfully."
+         message: "Email verified successfully.",
+         data: {
+            userID: user._id,
+            name: user.name,
+            email: user.email,
+            imageUrl: user.imageUrl,
+            imageId: user.imageId,
+            isVarified: user.isVarified,
+            createdAt: user.createdAt
+         }
       });
    } catch (error) {
       return res.status(500).json({

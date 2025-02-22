@@ -13,7 +13,7 @@ authRouter.post('/login', login);
 authRouter.post('/logout', userAuth, logout);
 // otp
 authRouter.post('/send-verify-otp', userAuth, sendVarifyOtp);
-authRouter.post('/verify-email', userAuth, verifyEmail);
+authRouter.post('/verify-email', verifyEmail);
 authRouter.post('/is-auth', userAuth, isUserAuthenticated)
 authRouter.post('/sent-reset-otp', sendResetOtp);
 authRouter.post('/reset-password', resetPassword);
