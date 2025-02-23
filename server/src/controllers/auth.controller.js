@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import transporter from "../config/nodemailer.js";
 import dotenv from 'dotenv';
+import mongoose from "mongoose";
 dotenv.config();
 
 
@@ -29,14 +30,14 @@ export const register = async (req, res) => {
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
 
-      const otp = String(Math.floor(100000 + Math.random() * 900000)); 
+      const otp = String(Math.floor(100000 + Math.random() * 900000));
 
       const newUser = await UserAuth.create({
          name,
          email,
          password: hashedPassword,
          otp,
-         otpExpires: Date.now() + 5 * 60 * 1000 
+         otpExpires: Date.now() + 5 * 60 * 1000
       });
 
       if (!newUser) {
@@ -198,42 +199,51 @@ export const sendVarifyOtp = async (req, res) => {
 export const verifyEmail = async (req, res) => {
    try {
       const { userID, otp } = req.body;
-      // check required fields
+
+      // Validate input
       if (!userID || !otp) {
-         return res.status(400).json({
-            success: false,
-            message: "User ID and OTP are required."
-         });
-      }
-      // check user
-      const user = await UserAuth.findById(userID);
-      if (!user) {
-         return res.status(400).json({
-            success: false,
-            message: "User not found."
-         });
-      }
-      // check otp
-      if (user.otp === '' || user.otp !== otp) {
-         return res.status(400).json({
-            success: false,
-            message: "Invalid OTP."
-         });
-      }
-      // check otp expires
-      if (user.otpExpires < Date.now()) {
-         return res.status(400).json({
-            success: false,
-            message: "OTP expired. Try again."
-         });
+         return res.status(400).json({ success: false, message: "User ID and OTP are required." });
       }
 
-      // update user
+      if (!mongoose.Types.ObjectId.isValid(userID)) {
+         return res.status(400).json({ success: false, message: "Invalid User ID format." });
+      }
+
+      // Check if user exists
+      const user = await UserAuth.findById(userID).select("+otp +otpExpires");
+      if (!user) {
+         return res.status(404).json({ success: false, message: "User not found." });
+      }
+
+      // Validate OTP
+      if (!user.otp || user.otp !== otp) {
+         await user.save();
+         return res.status(400).json({ success: false, message: "Invalid OTP." });
+      }
+
+      // Check OTP expiration
+      if (user.otpExpires < Date.now()) {
+         return res.status(400).json({ success: false, message: "OTP expired. Request a new one." });
+      }
+
+      // Update user verification status
       user.isVarified = true;
-      user.otp = '';
+      user.otp = ''; 
       user.otpExpires = '';
       await user.save();
 
+      // Generate secure JWT token
+      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+         expiresIn: process.env.JWT_EXPIRE || "7d",
+      });
+
+      // Set secure HTTP-only cookie
+      res.cookie("token", token, {
+         httpOnly: true,
+         secure: process.env.CURRENT_STATUS === "production",
+         sameSite: process.env.CURRENT_STATUS === "production" ? "none" : "strict",
+         maxAge: 7 * 24 * 60 * 60 * 1000, 
+      });
 
       return res.status(200).json({
          success: true,
@@ -245,22 +255,41 @@ export const verifyEmail = async (req, res) => {
             imageUrl: user.imageUrl,
             imageId: user.imageId,
             isVarified: user.isVarified,
-            createdAt: user.createdAt
-         }
+            createdAt: user.createdAt,
+         },
       });
    } catch (error) {
-      return res.status(500).json({
-         success: false,
-         message: "Internal Server Error"
-      });
+      console.error("Error verifying email:", error);
+      return res.status(500).json({ success: false, message: "Internal Server Error" });
    }
 };
 
 export const isUserAuthenticated = async (req, res) => {
    try {
+
+      const { userID } = req.body;
+
+      if (!userID) {
+         return res.status(400).json({
+            success: false,
+            message: "User ID is required."
+         });
+      }
+
+      const user = await UserAuth.findById(userID)
+         .select("-password -otp -otpExpires -resetOtp -resetOtpExpires");
+
+      if (!user) {
+         return res.status(400).json({
+            success: false,
+            message: "User not found."
+         });
+      };
+
       return res.status(200).json({
          success: true,
-         message: "User is authenticated."
+         message: "User is authenticated.",
+         data: user
       });
    } catch (error) {
       return res.status(500).json({

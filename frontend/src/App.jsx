@@ -32,45 +32,44 @@ const App = () => {
    };
 
    return (
-      <main className='w-full h-screen mx-auto bg-amber-200 dark:bg-gray-800 bg:text-gray-800 dark:text-gray-200'>
+      <main className='w-full h-screen mx-auto bg-amber-200 dark:bg-gray-800 bg:text-gray-800 dark:text-gray-200 overflow-hidden'>
+            <button
+               onClick={toggleTheme}
+               className="fixed top-4 right-4 p-2 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-200 text-xl"
+            >
+               {theme === 'dark' ? '🌞' : '🌙'}
+            </button>
 
-         <button
-            onClick={toggleTheme}
-            className="fixed top-4 right-4 p-2 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-200 text-xl"
-         >
-            {theme === 'dark' ? '🌞' : '🌙'}
-         </button>
+            <Routes>
+               <Route element={<AuthLayout />}>
+                  <Route path='/sign-in' element={<Signin />} />
+                  <Route path='/sign-up' element={<Signup />} />
+               </Route>
+               <Route element={<RootLayout />}>
+                  <Route path='/' element={<Home />} />
+                  <Route path='/about' element={<About />} />
+                  <Route path='/blogs' element={<Blogs />} />
+                  <Route path='/blog/:slugParam' element={<BlogDetails />} />
+                  <Route path='/create-blog' element={<CreateBlog />} />
+                  <Route path='/update-blog/:slugParam' element={<UpdateBlog />} />
+                  <Route path='/profile/:id' element={<Profile />} />
+               </Route>
+            </Routes>
 
-         <Routes>
-            <Route element={<AuthLayout />}>
-               <Route path='/sign-in' element={<Signin />} />
-               <Route path='/sign-up' element={<Signup />} />
-            </Route>
-            <Route element={<RootLayout />}>
-               <Route path='/' element={<Home />} />
-               <Route path='/about' element={<About />} />
-               <Route path='/blogs' element={<Blogs />} />
-               <Route path='/blog/:slugParam' element={<BlogDetails />} />
-               <Route path='/create-blog' element={<CreateBlog />} />
-               <Route path='/update-blog/:slugParam' element={<UpdateBlog />} />
-               <Route path='/profile/:id' element={<Profile />} />
-            </Route>
-         </Routes>
-
-         {/* toast notification */}
-         <ToastContainer
-            position="bottom-right"
-            autoClose={10000}
-            limit={3}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick={false}
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-            theme="light"
-         />
+            {/* toast notification */}
+            <ToastContainer
+               position="bottom-right"
+               autoClose={10000}
+               limit={3}
+               hideProgressBar={false}
+               newestOnTop={false}
+               closeOnClick={false}
+               rtl={false}
+               pauseOnFocusLoss
+               draggable
+               pauseOnHover
+               theme="light"
+            />
       </main>
    )
 }

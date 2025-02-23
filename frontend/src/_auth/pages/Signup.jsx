@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
 
 import { register } from '../../lib/api/user.api';
+import Otp from '../../components/Otp';
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -13,6 +14,8 @@ const Signup = () => {
   });
 
   const [errors, setErrors] = useState({});
+  const [isOtpOpen, setIsOtpOpen] = useState(false);
+  const [responseData, setResponseData] = useState({});
 
   // Handle input change
   const handleChange = (e) => {
@@ -38,7 +41,13 @@ const Signup = () => {
 
     try {
       const res = await register(formData);
+      if (!res.data.userID || !res.data.email) {
+        toast.error("Something went wrong");
+        return;
+      }
       toast.success(res.message);
+      setResponseData(res.data);
+      setIsOtpOpen(true);
       setFormData({ name: '', email: '', password: '' });
     } catch (error) {
       toast.error(error.response?.data?.message || "Something went wrong");
@@ -53,73 +62,84 @@ const Signup = () => {
       </Helmet>
 
       <div className="flex items-center justify-center bg-gray-100 dark:bg-gray-900 min-h-fit">
-        <div className="w-full max-w-md bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-          <h2 className="text-2xl font-bold text-center text-gray-800 dark:text-white">
-            Sign Up
-          </h2>
+        {
+          isOtpOpen ? (
+            <Otp
+              setIsOtpOpen={setIsOtpOpen}
+              userID={responseData.userID}
+              email={responseData.email}
+              action="register"
+            />
+          ) : (
+            <div className="w-full max-w-md bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+              <h2 className="text-2xl font-bold text-center text-gray-800 dark:text-white">
+                Sign Up
+              </h2>
 
-          <form onSubmit={handleSubmit} className="mt-4">
-            {/* Name Field */}
-            <div className="mb-4">
-              <label className="block text-gray-700 dark:text-gray-300">Full Name</label>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring ${errors.name ? "border-red-500" : "border-gray-300 dark:border-gray-600"
-                  } bg-gray-50 dark:bg-gray-700 dark:text-white`}
-                placeholder="Enter your full name"
-              />
-              {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
+              <form onSubmit={handleSubmit} className="mt-4">
+                {/* Name Field */}
+                <div className="mb-4">
+                  <label className="block text-gray-700 dark:text-gray-300">Full Name</label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring ${errors.name ? "border-red-500" : "border-gray-300 dark:border-gray-600"
+                      } bg-gray-50 dark:bg-gray-700 dark:text-white`}
+                    placeholder="Enter your full name"
+                  />
+                  {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
+                </div>
+
+                {/* Email Field */}
+                <div className="mb-4">
+                  <label className="block text-gray-700 dark:text-gray-300">Email Address</label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring ${errors.email ? "border-red-500" : "border-gray-300 dark:border-gray-600"
+                      } bg-gray-50 dark:bg-gray-700 dark:text-white`}
+                    placeholder="Enter your email"
+                  />
+                  {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
+                </div>
+
+                {/* Password Field */}
+                <div className="mb-4">
+                  <label className="block text-gray-700 dark:text-gray-300">Password</label>
+                  <input
+                    type="password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring ${errors.password ? "border-red-500" : "border-gray-300 dark:border-gray-600"
+                      } bg-gray-50 dark:bg-gray-700 dark:text-white`}
+                    placeholder="Enter your password"
+                  />
+                  {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
+                </div>
+
+                {/* Submit Button */}
+                <button
+                  type="submit"
+                  className="w-full bg-blue-500 dark:bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-600 dark:hover:bg-blue-700 transition">
+                  Register
+                </button>
+              </form>
+
+              {/* Login Link */}
+              <p className="mt-4 text-gray-600 dark:text-gray-400 text-center">
+                Already have an account?
+                <Link to="/sign-in" className="text-blue-500 dark:text-blue-400 hover:underline ml-2">
+                  Sign In
+                </Link>
+              </p>
             </div>
-
-            {/* Email Field */}
-            <div className="mb-4">
-              <label className="block text-gray-700 dark:text-gray-300">Email Address</label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring ${errors.email ? "border-red-500" : "border-gray-300 dark:border-gray-600"
-                  } bg-gray-50 dark:bg-gray-700 dark:text-white`}
-                placeholder="Enter your email"
-              />
-              {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
-            </div>
-
-            {/* Password Field */}
-            <div className="mb-4">
-              <label className="block text-gray-700 dark:text-gray-300">Password</label>
-              <input
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring ${errors.password ? "border-red-500" : "border-gray-300 dark:border-gray-600"
-                  } bg-gray-50 dark:bg-gray-700 dark:text-white`}
-                placeholder="Enter your password"
-              />
-              {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
-            </div>
-
-            {/* Submit Button */}
-            <button
-              type="submit"
-              className="w-full bg-blue-500 dark:bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-600 dark:hover:bg-blue-700 transition">
-              Register
-            </button>
-          </form>
-
-          {/* Login Link */}
-          <p className="mt-4 text-gray-600 dark:text-gray-400 text-center">
-            Already have an account?
-            <Link to="/sign-in" className="text-blue-500 dark:text-blue-400 hover:underline ml-2">
-              Sign In
-            </Link>
-          </p>
-        </div>
+          )
+        }
       </div>
     </>
   );
