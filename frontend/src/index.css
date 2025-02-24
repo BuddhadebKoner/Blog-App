@@ -1,6 +1,33 @@
 @import "tailwindcss";
 @custom-variant dark (&:where(.dark, .dark *));
 
+@theme {
+   /* Background Colors */
+   --color-background-light: #ffffff;
+   --color-background-dark: #000000;
+
+   /* Primary Text Colors */
+   --color-text-primary-light: #000000;
+   --color-text-primary-dark: #ffffff;
+
+   /* Secondary Text Colors (for less prominent copy) */
+   --color-text-secondary-light: #333333;
+   --color-text-secondary-dark: #cccccc;
+
+   /* Border Colors */
+   --color-border-light: #e0e0e0;
+   --color-border-dark: #2e2e2e;
+
+   /* Accent Colors (for interactive elements) */
+   --color-accent-light: #555555;
+   --color-accent-dark: #bbbbbb;
+
+   /* Surface Colors (for cards, panels, or inner containers) */
+   --color-surface-light: #f7f7f7;
+   --color-surface-dark: #1e1e1e;
+}
+
+
 body {
    max-width: 100vw;
    min-height: 100vh;

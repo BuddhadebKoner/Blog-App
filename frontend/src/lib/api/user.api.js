@@ -30,5 +30,17 @@ export const register = async (data) => {
 
 // login
 // logout
+export const logOut = async () => {
+   try {
+      const response = await axiosInstance.post('/api/auth/logout');
+      return response.data;
+   } catch (error) {
+      console.error("Logout Error:", error);
+      return {
+         success: false,
+         message: error.response?.data?.message || "Something went wrong"
+      };
+   }
+};
 // getUser
 // updateUser
