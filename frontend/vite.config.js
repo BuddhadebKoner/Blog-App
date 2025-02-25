@@ -8,7 +8,9 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+  // serve to wifi local network
   server: {
+    host: true,
     port: 5173,
-  },
+  }
 })
