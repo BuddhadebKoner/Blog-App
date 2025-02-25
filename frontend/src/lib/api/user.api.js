@@ -18,6 +18,8 @@ export const register = async (data) => {
          password,
       });
 
+      console.log("Register Response:", response.data);
+
       return response.data;
    } catch (error) {
       console.error("Register Error:", error);
@@ -29,6 +31,32 @@ export const register = async (data) => {
 };
 
 // login
+export const login = async (data) => {
+   const { email, password } = data;
+
+   if (!email || !password) {
+      return {
+         success: false,
+         message: "Required field can't be empty!"
+      };
+   }
+
+   try {
+      const response = await axiosInstance.post('/api/auth/login', {
+         email,
+         password,
+      });
+
+      return response.data;
+   } catch (error) {
+      console.error("Login Error:", error);
+      return {
+         success: false,
+         message: error.response?.data?.message || "Something went wrong"
+      };
+   }
+};
+
 // logout
 export const logOut = async () => {
    try {
@@ -43,4 +71,16 @@ export const logOut = async () => {
    }
 };
 // getUser
+export const getUser = async () => { 
+   try {
+      const response = await axiosInstance.get(`/api/auth/get-user`);
+      return response.data;
+   } catch (error) {
+      console.error("Get User Error:", error);
+      return {
+         success: false,
+         message: error.response?.data?.message || "Something went wrong"
+      };
+   }
+};
 // updateUser

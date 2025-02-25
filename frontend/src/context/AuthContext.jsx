@@ -17,7 +17,7 @@ export const AuthProvider = ({ children }) => {
    // Update authentication state when data changes
    useEffect(() => {
       if (isAuthenticatedData?.success) {
-         console.log("isAuthenticatedData", isAuthenticatedData);
+         // console.log("isAuthenticatedData", isAuthenticatedData);
          setCurrentUser(isAuthenticatedData?.data);
          setIsAuthenticated(true);
       } else {

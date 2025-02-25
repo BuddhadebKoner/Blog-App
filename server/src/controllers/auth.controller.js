@@ -21,12 +21,46 @@ export const register = async (req, res) => {
 
       const existUser = await UserAuth.findOne({ email });
       if (existUser) {
-         return res.status(400).json({
-            success: false,
-            message: "Email already exists. Try another email!"
-         });
+         // If the account exists but isn't verified, re-issue the OTP
+         if (!existUser.isVarified) {
+            const otp = String(Math.floor(100000 + Math.random() * 900000));
+            existUser.otp = otp;
+            existUser.otpExpires = Date.now() + 5 * 60 * 1000; // 5 minutes expiry
+
+            // Optionally: update other fields (like name or password) if needed here
+            await existUser.save();
+
+            // Send OTP via email
+            const mailOptions = {
+               from: process.env.SENDER_EMAIL,
+               to: email,
+               subject: "Verify Your Account",
+               text: `Your OTP is ${otp}`
+            };
+            await transporter.sendMail(mailOptions);
+
+            return res.status(200).json({
+               success: true,
+               message: "An unverified account already exists. A new OTP has been sent to your email.",
+               data: {
+                  userID: existUser._id,
+                  email: existUser.email
+               }
+            });
+         } else {
+            // If the account is already verified, don't allow duplicate registrations
+            return res.status(400).json({
+               success: false,
+               message: "Email already exists. Please login.",
+               data: {
+                  userID: existUser._id,
+                  email: existUser.email
+               }
+            });
+         }
       }
 
+      // If no existing account, create a new user
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -37,7 +71,8 @@ export const register = async (req, res) => {
          email,
          password: hashedPassword,
          otp,
-         otpExpires: Date.now() + 5 * 60 * 1000
+         otpExpires: Date.now() + 5 * 60 * 1000, // 5 minutes expiry
+         isVerified: false
       });
 
       if (!newUser) {
@@ -54,7 +89,6 @@ export const register = async (req, res) => {
          subject: "Verify Your Account",
          text: `Your OTP is ${otp}`
       };
-
       await transporter.sendMail(mailOptions);
 
       return res.status(201).json({
@@ -66,12 +100,14 @@ export const register = async (req, res) => {
          }
       });
    } catch (error) {
+      console.error("Registration error:", error);
       return res.status(500).json({
          success: false,
          message: "Internal Server Error"
       });
    }
 };
+
 
 
 export const login = async (req, res) => {
@@ -89,6 +125,12 @@ export const login = async (req, res) => {
          return res.status(400).json({
             success: false,
             message: "Incorrect email."
+         });
+      }
+      if (!userLogin.isVarified) {
+         return res.status(400).json({
+            success: false,
+            message: "Unauthorized Activity. Create account using otp"
          });
       }
 
@@ -228,7 +270,7 @@ export const verifyEmail = async (req, res) => {
 
       // Update user verification status
       user.isVarified = true;
-      user.otp = ''; 
+      user.otp = '';
       user.otpExpires = '';
       await user.save();
 
@@ -242,7 +284,7 @@ export const verifyEmail = async (req, res) => {
          httpOnly: true,
          secure: process.env.CURRENT_STATUS === "production",
          sameSite: process.env.CURRENT_STATUS === "production" ? "none" : "strict",
-         maxAge: 7 * 24 * 60 * 60 * 1000, 
+         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
 
       return res.status(200).json({
