@@ -37,3 +37,26 @@ body {
    padding: 0;
    box-sizing: border-box;
 }
+
+/* Improve scrollbar styling */
+::-webkit-scrollbar {
+   width: 8px;
+   height: 8px;
+}
+
+::-webkit-scrollbar-track {
+   background: var(--color-surface-light);
+}
+
+::-webkit-scrollbar-thumb {
+   background: #888;
+   border-radius: 4px;
+}
+
+.dark ::-webkit-scrollbar-track {
+   background: var(--color-surface-dark);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+   background: #666;
+}

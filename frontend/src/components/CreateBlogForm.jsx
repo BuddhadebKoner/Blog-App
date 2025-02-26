@@ -1,24 +1,19 @@
 import React, { useState } from 'react'
 
 const CreateBlogForm = ({
+   className,
    title,
    setTitle,
-   imageUrl,
-   setImageUrl,
-   imageId,
-   setImageId,
    videoLink,
    setVideoLink,
    readTime,
    setReadTime,
    slugParam,
    setSlugParam,
-   isPublished,
-   setIsPublished,
-   publishedAt,
-   setPublishedAt,
    content,
-   setContent
+   setContent,
+   blogImage,
+   setBlogImage,
 }) => {
    const [errors, setErrors] = useState({})
    const [loading, setLoading] = useState(false)
@@ -91,7 +86,7 @@ const CreateBlogForm = ({
    }
 
    return (
-      <div className="w-full lg:w-1/2 px-4 overflow-y-auto h-full py-[2.5vh]">
+      <div className={`${className} px-4 py-[2.5vh] w-full lg:w-1/2 overflow-y-auto h-full`}>
          <h1 className="text-2xl font-semibold text-gray-900 dark:text-white text-center mb-6">
             Create New Blog
          </h1>
@@ -123,23 +118,8 @@ const CreateBlogForm = ({
                   Image URL
                </label>
                <input
-                  type="url"
-                  value={imageUrl}
+                  type="file"
                   onChange={(e) => setImageUrl(e.target.value)}
-                  disabled={loading}
-                  className="w-full rounded-md border border-gray-300 dark:border-gray-600 p-2 bg-white dark:bg-gray-800"
-               />
-            </div>
-
-            {/* Image ID */}
-            <div>
-               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Image ID
-               </label>
-               <input
-                  type="text"
-                  value={imageId}
-                  onChange={(e) => setImageId(e.target.value)}
                   disabled={loading}
                   className="w-full rounded-md border border-gray-300 dark:border-gray-600 p-2 bg-white dark:bg-gray-800"
                />
@@ -187,32 +167,6 @@ const CreateBlogForm = ({
                   className={`w-full rounded-md border ${errors.slugParam ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'} p-2 bg-white dark:bg-gray-800`}
                />
                {errors.slugParam && <p className="text-red-500 text-sm mt-1">{errors.slugParam}</p>}
-            </div>
-
-            {/* Is Published */}
-            <div className="flex items-center">
-               <input
-                  type="checkbox"
-                  checked={isPublished}
-                  onChange={(e) => setIsPublished(e.target.checked)}
-                  disabled={loading}
-                  className="mr-2"
-               />
-               <label className="text-sm text-gray-700 dark:text-gray-300">Published</label>
-            </div>
-
-            {/* Published At */}
-            <div>
-               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Published At
-               </label>
-               <input
-                  type="datetime-local"
-                  value={publishedAt}
-                  onChange={(e) => setPublishedAt(e.target.value)}
-                  disabled={loading}
-                  className="w-full rounded-md border border-gray-300 dark:border-gray-600 p-2 bg-white dark:bg-gray-800"
-               />
             </div>
 
             {/* Content Blocks */}

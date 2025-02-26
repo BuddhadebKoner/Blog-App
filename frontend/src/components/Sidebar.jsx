@@ -30,9 +30,9 @@ const Sidebar = ({ isAuthenticated, currentUser }) => {
    };
 
    return (
-      <aside className='w-full md:w-64 max-h-[95vh] overflow-hidden
+      <aside className='w-full md:w-64 min-h-0 h-fit overflow-hidden
                       bg-[var(--color-surface-light)] dark:bg-[var(--color-surface-dark)] 
-                      md:h-[calc(100vh-3rem)] rounded-xl md:rounded-r-none 
+                      md:h-[calc(100vh-3rem)]   rounded-none md:rounded-r-none md:rounded-l-xl
                       shadow-lg transition-colors duration-300 flex flex-col justify-between border-r border-[var(--color-border-light)] dark:border-[var(--color-border-dark)]'>
          <div className='p-4 border-b 
                       border-[var(--color-border-light)] dark:border-[var(--color-border-dark)]'>

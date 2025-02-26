@@ -8,7 +8,7 @@ const RootLayout = () => {
   const { isAuthenticated, currentUser, isAuthenticatedLoading } = useAuth();
 
   return (
-    <section className='w-full min-h-screen
+    <section className='w-full h-screen flex flex-col
                         bg-[var(--color-background-light)] dark:bg-[var(--color-background-dark)] 
                         transition-colors duration-300'>
       {
@@ -21,7 +21,7 @@ const RootLayout = () => {
           </div>
         ) : (
           <>
-            <div className='flex flex-col md:flex-row md:min-h-screen md:rounded-lg shadow-lg 
+            <div className='flex-1 min-h-0 flex flex-col md:flex-row md:min-h-screen md:rounded-lg shadow-lg 
                       sm:p-[2.5vh] md:space-y-0 md:p-6
                        dark:border-[var(--color-border-dark)]'>
 
@@ -29,10 +29,10 @@ const RootLayout = () => {
                 isAuthenticated={isAuthenticated}
                 currentUser={currentUser}
               />
-              <main className='flex-1 max-h-[95vh] overflow-hidden
+              <main className='flex-1 flex flex-col min-h-0 overflow-hidden 
                         bg-[var(--color-surface-light)] dark:bg-[var(--color-surface-dark)] 
-                        rounded-xl md:rounded-l-none md:rounded-r-xl 
-                        p-4 md:p-8 transition-colors duration-300 shadow-lg'>
+                        rounded-none md:rounded-l-none md:rounded-r-xl
+                         transition-colors duration-300 shadow-lg'>
                 <Outlet />
               </main>
             </div>
