@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { createBlog } from '../lib/api/blog.api'
 
 const CreateBlogForm = ({
     className,
@@ -14,7 +15,6 @@ const CreateBlogForm = ({
     setContent,
     setImageUrl,
     currentUser,
-    createBlog,
 }) => {
     const [errors, setErrors] = useState({})
     const [loading, setLoading] = useState(false)
@@ -23,8 +23,8 @@ const CreateBlogForm = ({
 
 
     const addContentBlock = () => {
-        setContent([...content, { _id: Date.now().toString(), type: '', value: '' }])
-    }
+        setContent([...content, { tempId: Date.now().toString(), type: '', value: '' }]);
+    };
 
     const handleContentTypeChange = (index, type) => {
         const updated = [...content]
@@ -64,12 +64,11 @@ const CreateBlogForm = ({
     const handleBlogImageChange = (e) => {
         setErrors({ ...errors, blogImage: null });
         const file = e.target.files[0];
-        // Validation checks...
-        setBlogImageFile(file); // Store File object
-        setImageUrl(URL.createObjectURL(file)); // For preview
+        setBlogImageFile(file);
+        setImageUrl(URL.createObjectURL(file));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault()
         setServerError(null)
 
@@ -83,12 +82,19 @@ const CreateBlogForm = ({
         formData.append('videoLink', videoLink);
         formData.append('readTime', readTime);
         formData.append('slugParam', slugParam);
-        formData.append('content', JSON.stringify(content));
+
+        // Before sending, remove tempId from each content block
+        const sanitizedContent = content.map(({ tempId, _id, ...rest }) => rest);
+        formData.append('content', JSON.stringify(sanitizedContent));
+
         if (blogImageFile) {
-            formData.append('blogImage', blogImageFile); 
+            formData.append('blogImage', blogImageFile);
         }
 
-        createBlog(formData);
+        console.log('formData', formData);
+
+        const res = await createBlog(formData);
+        console.log(res);
         setLoading(false)
     }
 
@@ -180,7 +186,7 @@ const CreateBlogForm = ({
                     </label>
                     {content.map((block, index) => (
                         <div
-                            key={block._id}
+                            key={block.tempId}
                             className="mb-4 p-4 border rounded-md dark:border-gray-600"
                         >
                             <div className="mb-2">
