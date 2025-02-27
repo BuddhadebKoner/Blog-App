@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "./QueryKeys";
 import { isAuthenticated, varifyEmail } from "../api/auth.api";
 import { getUser, login, logOut } from "../api/user.api";
+import { createBlog } from "../api/blog.api";
 
 // varify email with otp 
 export const useVerifyEmail = () => {
@@ -66,3 +67,22 @@ export const useGetUser = () => {
       refetchOnWindowFocus: false,
    });
 };
+
+// create blog
+export const useCreateBlog = () => { 
+
+   const queryClient = useQueryClient();
+
+   return useMutation({
+      mutationKey: [QUERY_KEYS.CREATE_BLOG],
+      mutationFn: createBlog,
+      onSuccess: (data) => { 
+         if (data.success) {
+            queryClient.invalidateQueries([QUERY_KEYS.GET_BLOGS]);
+         }
+      },
+      onError: (error) => {
+         toast.error(error.response?.data?.message || "Something went wrong");
+      }
+   });
+}; 

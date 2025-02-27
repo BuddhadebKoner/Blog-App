@@ -5,4 +5,8 @@ export const QUERY_KEYS = {
    LOGOUT: "logout",
    LOGIN: "login",
    GET_USER: "get-user",
+
+   // blog
+   GET_BLOGS: "get-blogs",
+   CREATE_BLOG: "create-blog",
 };

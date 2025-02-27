@@ -18,7 +18,7 @@ export const register = async (data) => {
          password,
       });
 
-      console.log("Register Response:", response.data);
+      // console.log("Register Response:", response.data);
 
       return response.data;
    } catch (error) {

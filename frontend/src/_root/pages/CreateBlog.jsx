@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import CreateBlogForm from '../../components/CreateBlogForm'
 import PreviewBlogForm from '../../components/PreviewBlogForm'
 import { useAuth } from '../../context/AuthContext'
+import { useCreateBlog } from '../../lib/react-query/queriesAndMutation'
 
 const CreateBlog = () => {
   const [title, setTitle] = useState('')
@@ -9,9 +10,20 @@ const CreateBlog = () => {
   const [readTime, setReadTime] = useState('')
   const [slugParam, setSlugParam] = useState('')
   const [content, setContent] = useState([])
-  const [blogImage, setBlogImage] = useState(null)
+  const [imageUrl, setImageUrl] = useState('')
+
   // extract user from context 
   const { isAuthenticated, isAuthenticatedLoading, isAuthenticatedError, currentUser } = useAuth();
+
+  const {
+    mutate: createBlog,
+    isLoading,
+    isError,
+    isSuccess,
+  } = useCreateBlog()
+
+  if (isAuthenticatedLoading || isLoading) return <div>Loading...</div>
+  if (isAuthenticatedError) return <div>Error: {isAuthenticatedError.message}</div>
 
   return (
     <div className="flex-1 min-h-0 w-full h-screen flex overflow-hidden">
@@ -28,19 +40,19 @@ const CreateBlog = () => {
           setSlugParam={setSlugParam}
           content={content}
           setContent={setContent}
-          blogImage={blogImage}
-          setBlogImage={setBlogImage}
+          setImageUrl={setImageUrl}
+          currentUser={currentUser}
+          createBlog={createBlog}
         />
         <PreviewBlogForm
           className="flex-1 min-h-0 overflow-y-auto"
           title={title}
-          imageUrl={blogImage}
           videoLink={videoLink}
           readTime={readTime}
           slugParam={slugParam}
-          blogImage={blogImage}
           content={content}
           currentUser={currentUser}
+          imageUrl={imageUrl}
         />
       </div>
     </div>

@@ -12,20 +12,12 @@ const getYouTubeID = (url) => {
 const PreviewBlogForm = ({
    className,
    title,
-   imageUrl,
    videoLink,
    readTime,
-   slugParam,
-   blogImage,
    currentUser,
    content = [],
+   imageUrl
 }) => {
-   // Extract author details from currentUser
-   const authorName = currentUser?.name || 'Author Name'
-   const authorAvatar = currentUser?.imageUrl
-   const authorEmail = currentUser?.email
-   // Use user's join date if available, else default to current date
-   const publishedAt = currentUser?.createdAt ? new Date(currentUser.createdAt) : new Date()
 
    return (
       <div className={`${className} w-full lg:w-1/2 px-4 overflow-y-auto h-full hidden lg:block py-[2.5vh]`}>
@@ -56,32 +48,27 @@ const PreviewBlogForm = ({
             {/* Blog Meta */}
             <div className="flex items-center gap-4 mb-8">
                <div className="relative h-12 w-12">
-                  {
-                     authorAvatar === '' ? (
-                        <img
-                           src={authorAvatar}
-                           alt={authorName}
-                           className="rounded-full border-2 border-white dark:border-gray-800 shadow-sm w-full h-full"
-                        />
-                     ) : (
-                        <CircleUser
-                           className='rounded-full border-2 border-white dark:border-gray-800 shadow-sm w-full h-full'
-                        />
-                     )
-                  }
+                  {currentUser ? (
+                     <img
+                        src={currentUser?.imageUrl}
+                        alt={currentUser?.name}
+                        className="rounded-full border-2 border-white dark:border-gray-800 shadow-sm w-full h-full"
+                     />
+                  ) : (
+                     <CircleUser className="rounded-full border-2 border-white dark:border-gray-800 shadow-sm w-full h-full" />
+                  )}
                </div>
                <div>
                   <p className="font-medium text-gray-900 dark:text-gray-100">
-                     {authorName}
+                     {currentUser?.name || 'Author name preview'}
                   </p>
-                  {authorEmail && (
-                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                        {authorEmail}
-                     </p>
-                  )}
                   <div className="flex gap-3 text-sm text-gray-600 dark:text-gray-400">
                      <span>
-                        {publishedAt.toLocaleDateString()}
+                        {new Date().toLocaleDateString('en-IN', {
+                           month: 'long',
+                           day: 'numeric',
+                           year: 'numeric'
+                        })}
                      </span>
                      {readTime && <span>• {readTime}</span>}
                   </div>
