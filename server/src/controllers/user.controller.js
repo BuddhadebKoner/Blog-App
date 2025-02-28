@@ -7,7 +7,7 @@ export const getUserById = async (req, res) => {
       const { userID } = req.body;
       // check user is exist or not
       const user = await UserAuth.findById(userID)
-         .select("-password -otp -otpExpires -resetOtp -resetOtpExpires -__v");
+         .select("-password -otp -otpExpires -resetOtp -resetOtpExpires -__v -blogs");
 
       if (!user) {
          return res.status(404).json({
@@ -104,7 +104,7 @@ export const getUserByIdParams = async (req, res) => {
       const { id } = req.params;
       // check user is exist or not
       const user = await UserAuth.findById(id)
-         .select("-password -otp -otpExpires -resetOtp -resetOtpExpires -__v");
+         .select("-password -otp -otpExpires -resetOtp -resetOtpExpires -__v -blogs");
       if (!user) {
          return res.status(404).json({
             success: false,

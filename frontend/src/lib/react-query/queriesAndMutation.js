@@ -1,8 +1,8 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "./QueryKeys";
-import { isAuthenticated, varifyEmail } from "../api/auth.api";
-import { getUser, getUserById, login, logOut } from "../api/user.api";
-import { createBlog } from "../api/blog.api";
+import { isAuthenticated, varifyEmail } from "../api/auth.api.js";
+import { getAllBlogs, getAllBlogsByUserId, getUser, getUserById, login, logOut } from "../api/user.api.js";
+import { createBlog, getBlogById } from "../api/blog.api.js";
 
 // varify email with otp 
 export const useVerifyEmail = () => {
@@ -79,14 +79,14 @@ export const useGetUserById = (id) => {
 };
 
 // create blog
-export const useCreateBlog = () => { 
+export const useCreateBlog = () => {
 
    const queryClient = useQueryClient();
 
    return useMutation({
       mutationKey: [QUERY_KEYS.CREATE_BLOG],
       mutationFn: createBlog,
-      onSuccess: (data) => { 
+      onSuccess: (data) => {
          if (data.success) {
             queryClient.invalidateQueries([QUERY_KEYS.GET_BLOGS]);
          }
@@ -95,4 +95,47 @@ export const useCreateBlog = () => {
          toast.error(error.response?.data?.message || "Something went wrong");
       }
    });
-}; 
+};
+
+// React Query hook for blogs with infinite scrolling
+export const useGetAllBlogsByUserId = (id, limit = 5) => {
+   return useInfiniteQuery({
+      queryKey: [QUERY_KEYS.GET_ALL_BLOGS_BY_USER_ID, id, limit],
+      queryFn: ({ pageParam = 1 }) => getAllBlogsByUserId(id, pageParam, limit),
+      getNextPageParam: (lastPage) => {
+         if (lastPage.currentPage < lastPage.totalPages) {
+            return lastPage.currentPage + 1;
+         }
+         return undefined;
+      },
+      staleTime: 1000 * 60 * 5,
+      refetchOnWindowFocus: false,
+      enabled: !!id,
+   });
+};
+
+// get blog for infinite scrolling
+export const useGetAllBlogs = (limit = 5) => {
+   return useInfiniteQuery({
+      queryKey: [QUERY_KEYS.GET_ALL_BLOGS, limit],
+      queryFn: ({ pageParam = 1 }) => getAllBlogs(pageParam, limit),
+      getNextPageParam: (lastPage) => {
+         if (lastPage.currentPage < lastPage.totalPages) {
+            return lastPage.currentPage + 1;
+         }
+         return undefined;
+      },
+      staleTime: 1000 * 60 * 5, 
+      refetchOnWindowFocus: false,
+   });
+};
+
+// get blog by id
+export const useGetBlogById = (id) => { 
+   return useQuery({
+      queryKey: [QUERY_KEYS.GET_BLOG_BY_ID, id],
+      queryFn: () => getBlogById(id),
+      staleTime: 1000 * 60 * 5,
+      refetchOnWindowFocus: false,
+   });
+}

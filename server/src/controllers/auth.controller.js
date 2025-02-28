@@ -319,7 +319,7 @@ export const isUserAuthenticated = async (req, res) => {
       }
 
       const user = await UserAuth.findById(userID)
-         .select("-password -otp -otpExpires -resetOtp -resetOtpExpires");
+         .select("-password -otp -otpExpires -resetOtp -resetOtpExpires -blogs");
 
       if (!user) {
          return res.status(400).json({

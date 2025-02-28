@@ -71,7 +71,7 @@ export const logOut = async () => {
    }
 };
 // getUser
-export const getUser = async () => { 
+export const getUser = async () => {
    try {
       const response = await axiosInstance.get(`/api/auth/get-user`);
       return response.data;
@@ -96,4 +96,28 @@ export const getUserById = async (id) => {
       };
    }
 }
-// updateUser
+// get all blogs by user id with pagination
+export const getAllBlogsByUserId = async (id, page = 1, limit = 2) => {
+   try {
+      const response = await axiosInstance.get(
+         `/api/blog/get-all-blogs-by-author/${id}?page=${page}&limit=${limit}`
+      );
+      return response.data;
+   } catch (error) {
+      console.error("Get Blogs Error:", error);
+      throw error;
+   }
+};
+
+// API call to fetch all blogs with pagination
+export const getAllBlogs = async (page = 1, limit = 5) => {
+   try {
+      const response = await axiosInstance.get(
+         `/api/blog/get-all-blogs?page=${page}&limit=${limit}`
+      );
+      return response.data;
+   } catch (error) {
+      console.error("Get All Blogs Error:", error);
+      throw error;
+   }
+};

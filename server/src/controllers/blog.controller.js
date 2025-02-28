@@ -46,7 +46,6 @@ export const getBlogs = async (req, res) => {
    }
 };
 
-
 // get a blog by id
 export const getBlogById = async (req, res) => {
    try {
@@ -62,7 +61,7 @@ export const getBlogById = async (req, res) => {
       }
 
       const blog = await Blog.findOne({ slugParam })
-         .populate({ path: "author", select: "name email" })
+         .populate({ path: "author", select: "-password -otp -otpExpires -resetOtp -resetOtpExpires -blogs -__v" })
          .sort({ createdAt: -1 })
          .lean();
 
@@ -81,9 +80,10 @@ export const getBlogById = async (req, res) => {
    }
 };
 
+// create blog
 export const createBlog = async (req, res) => {
    try {
-      const { author, title, videoLink, readTime, slugParam, content } = req.body;
+      const { author, title, videoLink, readTime, slugParam: originalSlugParam, content } = req.body;
       const blogImage = req.files?.blogImage?.[0]?.path;
 
       if (!author || !title || !videoLink || !readTime || !slugParam || !content) {
@@ -93,6 +93,9 @@ export const createBlog = async (req, res) => {
             message: "All fields are required."
          });
       }
+
+      // remove space add hyphen and convert to lowercase
+      const slugParam = originalSlugParam.replace(/\s+/g, "-").toLowerCase();
 
       // Convert content string to an array
       let parsedContent;
@@ -175,7 +178,7 @@ export const createBlog = async (req, res) => {
 
       // update user with blog id
       const userUpdateResult = await UserAuth.findByIdAndUpdate(author, { $push: { blogs: newBlog._id } });
-      console.log(userUpdateResult);
+      // console.log(userUpdateResult);
 
       return res.status(201).json({
          success: true,
@@ -318,5 +321,49 @@ export const deleteBlog = async (req, res) => {
          success: false,
          message: "Internal Server Error",
       });
+   }
+};
+
+// get all blogs by author, with infinity scroll
+export const getAllBlogsByAuthor = async (req, res) => {
+   try {
+      const { authorId } = req.params;
+      let { page, limit } = req.query;
+      page = parseInt(page) || 1;
+      limit = parseInt(limit) || 5;
+
+      if (page < 1 || limit < 1) {
+         return res.status(400).json({
+            success: false,
+            message: "Invalid pagination parameters.",
+         });
+      }
+
+      const skip = (page - 1) * limit;
+
+      // Fetch blogs with pagination and author details
+      const blogs = await Blog.find({ author: authorId })
+         .skip(skip)
+         .limit(limit)
+         .sort({ createdAt: -1 })
+         .select("title imageUrl readTime slugParam publishedAt")
+         .lean();
+
+      const totalBlogs = await Blog.countDocuments({ author: authorId });
+
+      return res.status(200).json({
+         success: true,
+         message: "Blogs fetched successfully.",
+         blogs,
+         totalBlogs,
+         totalPages: Math.ceil(totalBlogs / limit),
+         currentPage: page,
+      });
+   } catch (error) {
+      return res.status(500).json({
+         success: false,
+         message: "Internal Server Error",
+      });
+
    }
 };

@@ -1,5 +1,5 @@
 import express from 'express';
-import { createBlog, deleteBlog, getBlogById, getBlogs, updateBlog } from '../controllers/blog.controller.js';
+import { createBlog, deleteBlog, getAllBlogsByAuthor, getBlogById, getBlogs, updateBlog } from '../controllers/blog.controller.js';
 import { userAuth } from '../middlewares/userAuth.middleware.js';
 import fs from 'fs';
 import { upload } from '../middlewares/multer.midleware.js';
@@ -46,5 +46,6 @@ blogRoute.put('/update-blog/:slugParam', userAuth, (req, res, next) => {
 blogRoute.get('/get-all-blogs', getBlogs);
 blogRoute.get('/get-blog-by-id/:slugParam', getBlogById);
 blogRoute.delete('/delete-blog/:slugParam', userAuth, deleteBlog);
+blogRoute.get('/get-all-blogs-by-author/:authorId', getAllBlogsByAuthor);
 
 export default blogRoute;
