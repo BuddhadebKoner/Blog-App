@@ -19,8 +19,13 @@ const PreviewBlogForm = ({
    imageUrl
 }) => {
 
+   // restrict all mouse clicks and disable mode
+   const handleMouseDown = (e) => {
+      e.preventDefault()
+   }
+
    return (
-      <div className={`${className} w-full lg:w-1/2 px-4 overflow-y-auto h-full hidden lg:block py-[2.5vh]`}>
+      <div className={`${className} w-full lg:w-1/2 px-4 overflow-y-auto h-full hidden lg:block py-[2.5vh]`} onMouseDown={handleMouseDown}>
          <div className="max-w-3xl mx-auto">
             {/* Blog Header */}
             <div className="mb-8">
@@ -48,7 +53,7 @@ const PreviewBlogForm = ({
             {/* Blog Meta */}
             <div className="flex items-center gap-4 mb-8">
                <div className="relative h-12 w-12">
-                  {currentUser ? (
+                  {currentUser.imageUrl ? (
                      <img
                         src={currentUser?.imageUrl}
                         alt={currentUser?.name}

@@ -1,5 +1,9 @@
 import React, { useState } from 'react'
 import { createBlog } from '../lib/api/blog.api'
+import { LoaderCircle } from 'lucide-react'
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
+
 
 const CreateBlogForm = ({
     className,
@@ -15,11 +19,14 @@ const CreateBlogForm = ({
     setContent,
     setImageUrl,
     currentUser,
+    setLoading,
+    loading
 }) => {
     const [errors, setErrors] = useState({})
-    const [loading, setLoading] = useState(false)
     const [serverError, setServerError] = useState(null)
     const [blogImageFile, setBlogImageFile] = useState(null);
+
+    const navigate = useNavigate();
 
 
     const addContentBlock = () => {
@@ -94,6 +101,15 @@ const CreateBlogForm = ({
         console.log('formData', formData);
 
         const res = await createBlog(formData);
+        if (res.success) {
+            // redirect to blog page
+            toast.success('Blog created successfully');
+            navigate(`/blog/${res.blog.slugParam}`);
+            // clean up
+            setTitle('');
+        } else {
+            toast.error(res.message || 'Something went wrong');
+        }
         console.log(res);
         setLoading(false)
     }
@@ -254,7 +270,7 @@ const CreateBlogForm = ({
                     <button
                         type="submit"
                         disabled={loading}
-                        className={`px-4 py-2 bg-green-500 dark:bg-green-400 text-white rounded-lg transition duration-300 ${loading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-green-600 dark:hover:bg-green-500'
+                        className={`px-4 py-2 bg-green-500 dark:bg-green-400 text-white rounded-lg transition duration-300 ${loading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-green-600 dark:hover:bg-green-500 cursor-pointer'
                             }`}
                     >
                         {loading ? 'Saving...' : 'Save Blog'}

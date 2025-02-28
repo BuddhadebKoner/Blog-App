@@ -29,7 +29,7 @@ const blogSchema = new mongoose.Schema({
    slugParam: {
       type: String,
       required: true,
-      unqiue: true,
+      unique: true,
    },
    isPublished: {
       type: Boolean,

@@ -5,6 +5,7 @@ export const QUERY_KEYS = {
    LOGOUT: "logout",
    LOGIN: "login",
    GET_USER: "get-user",
+   GET_USER_BY_ID: "get-user-by-id",
 
    // blog
    GET_BLOGS: "get-blogs",

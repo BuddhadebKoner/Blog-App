@@ -152,8 +152,7 @@ export const createBlog = async (req, res) => {
       }
 
       const publishedAt = new Date();
-
-      const newBlog = new Blog({
+      const newBlog = await Blog.create({
          author,
          title,
          imageUrl: image.url,
@@ -166,13 +165,23 @@ export const createBlog = async (req, res) => {
          publishedAt
       });
 
-      await newBlog.save();
+      if (!newBlog) {
+         fs.unlinkSync(blogImage);
+         return res.status(500).json({
+            success: false,
+            message: "Blog creation failed."
+         });
+      }
+
+      // update user with blog id
+      const userUpdateResult = await UserAuth.findByIdAndUpdate(author, { $push: { blogs: newBlog._id } });
+      console.log(userUpdateResult);
+
       return res.status(201).json({
          success: true,
          message: "Blog created successfully.",
-         blog: newBlog
+         blog: newBlog,
       });
-
    } catch (error) {
       console.error(error);
       return res.status(500).json({

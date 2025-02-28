@@ -83,4 +83,17 @@ export const getUser = async () => {
       };
    }
 };
+// get user by id params
+export const getUserById = async (id) => {
+   try {
+      const response = await axiosInstance.get(`/api/auth/get-user/${id}`);
+      return response.data;
+   } catch (error) {
+      console.error("Get User Error:", error);
+      return {
+         success: false,
+         message: error.response?.data?.message || "Something went wrong"
+      };
+   }
+}
 // updateUser

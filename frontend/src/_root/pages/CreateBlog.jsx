@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import CreateBlogForm from '../../components/CreateBlogForm'
 import PreviewBlogForm from '../../components/PreviewBlogForm'
 import { useAuth } from '../../context/AuthContext'
+import { LoaderCircle } from 'lucide-react'
 
 const CreateBlog = () => {
   const [title, setTitle] = useState('')
@@ -10,13 +11,20 @@ const CreateBlog = () => {
   const [slugParam, setSlugParam] = useState('')
   const [content, setContent] = useState([])
   const [imageUrl, setImageUrl] = useState('')
+  const [loading, setLoading] = useState(false)
 
   // extract user from context 
   const { isAuthenticated, isAuthenticatedLoading, isAuthenticatedError, currentUser } = useAuth();
 
-
-  if (isAuthenticatedLoading) return <div>Loading...</div>
   if (isAuthenticatedError) return <div>Error: {isAuthenticatedError.message}</div>
+
+  if (loading || isAuthenticatedLoading) {
+    return (
+      <div className='flex justify-center items-center md:min-h-screen md:rounded-lg shadow-lg p-4 space-y-4 md:space-y-0 md:p-6 dark:border-[var(--color-border-dark)]'>
+        <LoaderCircle className='animate-spin w-10 h-10' />
+      </div>
+    )
+  }
 
   return (
     <div className="flex-1 min-h-0 w-full h-screen flex overflow-hidden">
@@ -35,6 +43,8 @@ const CreateBlog = () => {
           setContent={setContent}
           setImageUrl={setImageUrl}
           currentUser={currentUser}
+          setLoading={setLoading}
+          loading={loading}
         />
         <PreviewBlogForm
           className="flex-1 min-h-0 overflow-y-auto"

@@ -13,6 +13,10 @@ const userSchema = new mongoose.Schema(
          trim: true,
          unique: true,
       },
+      blogs: {
+         type: mongoose.Schema.Types.ObjectId,
+         ref: 'Blog',
+      },
       imageUrl: {
          type: String,
          default: '',

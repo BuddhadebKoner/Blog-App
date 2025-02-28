@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "./QueryKeys";
 import { isAuthenticated, varifyEmail } from "../api/auth.api";
-import { getUser, login, logOut } from "../api/user.api";
+import { getUser, getUserById, login, logOut } from "../api/user.api";
 import { createBlog } from "../api/blog.api";
 
 // varify email with otp 
@@ -63,6 +63,16 @@ export const useGetUser = () => {
    return useQuery({
       queryKey: [QUERY_KEYS.GET_USER],
       queryFn: getUser,
+      staleTime: 1000 * 60 * 5,
+      refetchOnWindowFocus: false,
+   });
+};
+
+// get user by id params
+export const useGetUserById = (id) => {
+   return useQuery({
+      queryKey: [QUERY_KEYS.GET_USER_BY_ID, id],
+      queryFn: () => getUserById(id),
       staleTime: 1000 * 60 * 5,
       refetchOnWindowFocus: false,
    });

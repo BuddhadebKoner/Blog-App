@@ -1,7 +1,7 @@
 import express from 'express'
 import { isUserAuthenticated, login, logout, register, resetPassword, sendResetOtp, sendVarifyOtp, verifyEmail } from '../controllers/auth.controller.js';
 import { userAuth } from '../middlewares/userAuth.middleware.js';
-import { getUserById, updateUserById } from '../controllers/user.controller.js';
+import { getUserById, getUserByIdParams, updateUserById } from '../controllers/user.controller.js';
 import fs from 'fs';
 import { upload } from '../middlewares/multer.midleware.js';
 
@@ -37,7 +37,7 @@ authRouter.put('/update-user', userAuth, (req, res, next) => {
       res.status(500).send({ error: "An unexpected error occurred" });
    }
 }, updateUserById);
-
+authRouter.get('/get-user/:id', getUserByIdParams);
 
 
 
