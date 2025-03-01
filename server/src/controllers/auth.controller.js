@@ -143,12 +143,13 @@ export const login = async (req, res) => {
 
       // generate token
       const token = jwt.sign({ id: userLogin._id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE });
-      res.cookie('token', token, {
+      res.cookie("token", token, {
          httpOnly: true,
-         secure: process.env.CURRENT_STATUS === 'production',
-         sameSite: process.env.CURRENT_STATUS === 'production' ? 'none' : 'strict',
+         secure: true,
+         sameSite: "none",
          maxAge: 7 * 24 * 60 * 60 * 1000,
-      })
+         path: "/"
+      });
 
       return res.status(200).json({
          success: true,
@@ -167,9 +168,10 @@ export const logout = async (req, res) => {
    try {
       res.clearCookie("token", {
          httpOnly: true,
-         secure: process.env.CURRENT_STATUS === "production",
-         sameSite: process.env.CURRENT_STATUS === "production" ? "none" : "strict",
-         path: "/",
+         secure: true,
+         sameSite: "none",
+         maxAge: 7 * 24 * 60 * 60 * 1000,
+         path: "/"
       });
 
       return res.status(200).json({
@@ -280,9 +282,10 @@ export const verifyEmail = async (req, res) => {
       // Set secure HTTP-only cookie
       res.cookie("token", token, {
          httpOnly: true,
-         secure: process.env.CURRENT_STATUS === "production",
-         sameSite: process.env.CURRENT_STATUS === "production" ? "none" : "lax",
+         secure: true,
+         sameSite: "none",
          maxAge: 7 * 24 * 60 * 60 * 1000,
+         path: "/"
       });
 
       return res.status(200).json({
