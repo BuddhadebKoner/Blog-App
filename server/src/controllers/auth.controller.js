@@ -148,7 +148,8 @@ export const login = async (req, res) => {
          secure: true,
          sameSite: "none",
          maxAge: 7 * 24 * 60 * 60 * 1000,
-         path: "/"
+         path: "/",
+         partitioned: true
       });
 
       return res.status(200).json({
@@ -171,7 +172,8 @@ export const logout = async (req, res) => {
          secure: true,
          sameSite: "none",
          maxAge: 7 * 24 * 60 * 60 * 1000,
-         path: "/"
+         path: "/",
+         partitioned: true
       });
 
       return res.status(200).json({
@@ -285,7 +287,8 @@ export const verifyEmail = async (req, res) => {
          secure: true,
          sameSite: "none",
          maxAge: 7 * 24 * 60 * 60 * 1000,
-         path: "/"
+         path: "/",
+         partitioned: true
       });
 
       return res.status(200).json({
