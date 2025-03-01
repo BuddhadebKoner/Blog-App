@@ -86,7 +86,7 @@ export const createBlog = async (req, res) => {
       const { author, title, videoLink, readTime, slugParam: originalSlugParam, content } = req.body;
       const blogImage = req.files?.blogImage?.[0]?.path;
 
-      if (!author || !title || !videoLink || !readTime || !slugParam || !content) {
+      if (!author || !title || !videoLink || !readTime || !originalSlugParam || !content) {
          fs.unlinkSync(blogImage);
          return res.status(400).json({
             success: false,
@@ -203,6 +203,7 @@ export const updateBlog = async (req, res) => {
 
       // if all fields are empty then return 
       if (!title && !videoLink && !readTime && !willUpdateSlugParams && !content && !blogImage) {
+         fs.unlinkSync(blogImage);
          return res.status(400).json({
             success: false,
             message: "At least one field is required to update."
@@ -213,6 +214,7 @@ export const updateBlog = async (req, res) => {
       // Check if the blog exists
       const isBlogExists = await Blog.findOne({ slugParam });
       if (!isBlogExists) {
+         fs.unlinkSync(blogImage);
          return res.status(404).json({
             success: false,
             message: "Blog not found.",
@@ -245,6 +247,7 @@ export const updateBlog = async (req, res) => {
       if (blogImage) {
          const newImage = await uploadOnCloudinary(blogImage);
          if (!newImage.url) {
+            fs.unlinkSync(blogImage);
             return res.status(400).json({
                success: false,
                message: "Image upload failed."
@@ -274,6 +277,7 @@ export const updateBlog = async (req, res) => {
          { new: true }
       );
 
+      fs.unlinkSync(blogImage);
       return res.status(200).json({
          success: true,
          message: "Blog updated successfully.",
@@ -282,6 +286,7 @@ export const updateBlog = async (req, res) => {
 
    } catch (error) {
       console.error(error);
+      fs.unlinkSync(blogImage);
       return res.status(500).json({
          success: false,
          message: "Internal Server Error",

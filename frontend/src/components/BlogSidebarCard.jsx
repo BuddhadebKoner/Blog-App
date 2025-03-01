@@ -1,5 +1,6 @@
 import React from "react";
-import { CircleUser, FacebookIcon } from 'lucide-react';
+import { CircleUser, FacebookIcon, ShieldCheck } from 'lucide-react';
+import { Link } from "react-router-dom";
 
 export default function BlogSidebarCard({ author }) {
    return (
@@ -7,7 +8,10 @@ export default function BlogSidebarCard({ author }) {
          <h3 className="text-xl font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)] mb-4">
             Author
          </h3>
-         <div className="flex items-center space-x-3">
+         <Link
+            className="flex items-center space-x-3"
+            to={`/profile/${author._id}`}
+         >
             {author.imageUrl ? (
                <img
                   src={author.imageUrl || '/default-avatar.png'}
@@ -19,10 +23,10 @@ export default function BlogSidebarCard({ author }) {
             ) : (
                <CircleUser className="w-10 h-10" />
             )}
-            <span className="text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
+            <span className="text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] flex justify-start items-center gap-2">
                {author.name}
             </span>
-         </div>
+         </Link>
 
          <div className="mt-6">
             <button className="flex items-center text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] hover:text-[var(--color-text-primary-light)] dark:hover:text-[var(--color-text-primary-dark)] space-x-2">

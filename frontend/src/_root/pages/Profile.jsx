@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import React, { useEffect } from 'react';
+import { Link, useParams } from 'react-router-dom';
 import { useGetAllBlogsByUserId, useGetUserById } from '../../lib/react-query/queriesAndMutation';
 import { LoaderCircle, ShieldAlert } from 'lucide-react';
 import { useInView } from 'react-intersection-observer';
@@ -7,8 +7,6 @@ import { useInView } from 'react-intersection-observer';
 const Profile = () => {
   // extract params for url
   const { id } = useParams();
-  const [page, setPage] = useState(1);
-  const limit = 5;
 
   const {
     data: blogsData,
@@ -109,24 +107,6 @@ const Profile = () => {
           </div>
         </div>
 
-        <div className="profile-details w-full bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6">
-          <h2 className="text-xl font-semibold mb-4 border-b border-gray-300 dark:border-gray-600 pb-2 text-gray-900 dark:text-white">Account Details</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="detail-item">
-              <p className="text-sm text-gray-500 dark:text-gray-400">User ID</p>
-              <p className="font-medium text-gray-800 dark:text-gray-200">{user._id}</p>
-            </div>
-            <div className="detail-item">
-              <p className="text-sm text-gray-500 dark:text-gray-400">Member Since</p>
-              <p className="font-medium text-gray-800 dark:text-gray-200">{new Date(user.createdAt).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-              })}</p>
-            </div>
-          </div>
-        </div>
-
         {/* Blog Posts Section */}
         <div className="blog-posts w-full bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
           <h2 className="text-xl font-semibold mb-4 border-b border-gray-300 dark:border-gray-600 pb-2 text-gray-900 dark:text-white">
@@ -193,4 +173,4 @@ const Profile = () => {
   )
 }
 
-export default Profile
+export default Profile;

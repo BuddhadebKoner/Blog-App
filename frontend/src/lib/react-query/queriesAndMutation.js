@@ -108,7 +108,6 @@ export const useGetAllBlogsByUserId = (id, limit = 5) => {
          }
          return undefined;
       },
-      staleTime: 1000 * 60 * 5,
       refetchOnWindowFocus: false,
       enabled: !!id,
    });
@@ -125,7 +124,6 @@ export const useGetAllBlogs = (limit = 5) => {
          }
          return undefined;
       },
-      staleTime: 1000 * 60 * 5, 
       refetchOnWindowFocus: false,
    });
 };
@@ -135,7 +133,6 @@ export const useGetBlogById = (id) => {
    return useQuery({
       queryKey: [QUERY_KEYS.GET_BLOG_BY_ID, id],
       queryFn: () => getBlogById(id),
-      staleTime: 1000 * 60 * 5,
       refetchOnWindowFocus: false,
    });
 }

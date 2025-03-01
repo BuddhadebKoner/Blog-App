@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { useGetBlogById } from '../../lib/react-query/queriesAndMutation';
 import { useAuth } from '../../context/AuthContext';
 import BlogSidebarCard from '../../components/BlogSidebarCard';
-import { CircleUser } from 'lucide-react';
+import { CircleUser, Trash } from 'lucide-react';
 
 const BlogDetails = () => {
   const { slugParam } = useParams();
@@ -28,7 +28,7 @@ const BlogDetails = () => {
   });
 
   return (
-    <div className="w-full h-fit overflow-auto bg-[var(--color-background-light)] text-[var(--color-text-primary-light)] dark:bg-[var(--color-surface-dark)] dark:text-[var(--color-text-primary-dark)] lg:py-5 py-20 px-6 md:px-20 transition-colors duration-300">
+    <div className="w-full h-fit overflow-auto bg-transparent  text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)] lg:py-5 py-20 px-6 md:px-20 transition-colors duration-300">
       <section className="max-w-4xl mx-auto">
         <div className="flex justify-between items-center mb-6">
           <p className="text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] text-base py-5">
@@ -40,12 +40,12 @@ const BlogDetails = () => {
             </Link> /
             {blog.title.length > 25 ? `${blog.title.slice(0, 20)}...` : blog.title}
           </p>
-          {currentUser?.email === blog.author.email && (
+          {currentUser?._id === blog.author._id && (
             <button
-              className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors"
+              className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors cursor-pointer"
               onClick={() => { /* Add delete functionality */ }}
             >
-              Delete Blog
+              <Trash className="w-6 h-6" />
             </button>
           )}
         </div>
@@ -68,17 +68,23 @@ const BlogDetails = () => {
       <div className="max-w-4xl mx-auto mt-10 flex flex-col md:flex-row gap-10">
         <div className="w-full md:w-3/4">
           <div className="flex items-center gap-4 mb-6">
-            {blog.author.imageUrl ? (
-              <img
-                src={blog.author.imageUrl}
-                alt={blog.author.name}
-                className="w-12 h-12 rounded-full border border-[var(--color-border-light)] dark:border-[var(--color-border-dark)]"
-              />
-            ) : (
-              <CircleUser className="w-10 h-10" />
-            )}
+            <Link
+              to={`/profile/${blog.author._id}`}
+            >
+              {blog.author.imageUrl ? (
+                <img
+                  src={blog.author.imageUrl}
+                  alt={blog.author.name}
+                  className="w-12 h-12 rounded-full border border-[var(--color-border-light)] dark:border-[var(--color-border-dark)]"
+                />
+              ) : (
+                <CircleUser className="w-10 h-10" />
+              )}
+            </Link>
             <div>
-              <p className="text-lg font-semibold">{blog.author.name}</p>
+              <p className="text-lg font-semibold flex justify-start items-center gap-2">
+                {blog.author.name}
+              </p>
               <div className="flex items-center gap-4">
                 <p className="text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] text-sm">
                   {publishedDate}
