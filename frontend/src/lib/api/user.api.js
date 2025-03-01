@@ -121,3 +121,18 @@ export const getAllBlogs = async (page = 1, limit = 5) => {
       throw error;
    }
 };
+
+// update user
+export const updateUser = async (formData) => {
+   try {
+      const response = await axiosInstance.put('/api/auth/update-user', formData, {
+         headers: {
+            'Content-Type': 'multipart/form-data',
+         },
+      });
+      return response.data;
+   } catch (error) {
+      console.error("Update User Error:", error);
+      throw error; 
+   }
+};

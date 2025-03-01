@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 const BlogCard = ({ blog, className = '' }) => {
    return (
-      <div className={`bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300 ${className}`}>
+      <div className={`bg-white dark:bg-[var(--color-background-dark)] rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300 ${className}`}>
          <Link to={`/blog/${blog.slugParam}`}>
             {blog.imageUrl && (
                <div className="blog-image h-48 overflow-hidden">

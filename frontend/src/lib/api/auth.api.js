@@ -27,4 +27,28 @@ export const isAuthenticated = async () => {
    }
 };
 // send reset otp
+export const sendResetOtp = async ({ email }) => {
+   if (!email) {
+      throw new Error("Required field can't be empty!");
+   }
+
+   try {
+      const response = await axiosInstance.post("/api/auth/sent-reset-otp", { email });
+      return response.data;
+   } catch (error) {
+      throw new Error(error.response?.data?.message || "Something went wrong");
+   }
+};
 // reset password
+export const resetPassword = async ({ email, otp, newPassword }) => {
+   if (!email || !otp || !newPassword) {
+      throw new Error("Required field can't be empty!");
+   }
+
+   try {
+      const response = await axiosInstance.post("/api/auth/reset-password", { email, otp, newPassword });
+      return response.data;
+   } catch (error) {
+      throw new Error(error.response?.data?.message || "Something went wrong");
+   }
+};

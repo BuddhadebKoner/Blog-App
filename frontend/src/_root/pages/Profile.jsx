@@ -42,18 +42,18 @@ const Profile = () => {
   if (isError) return (
     <div className="flex justify-center items-center md:min-h-screen md:rounded-lg shadow-lg p-4 space-y-4 md:space-y-0 md:p-6 gap-5">
       <ShieldAlert
-        className='w-10 h-10'
+        className='w-10 h-10 text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)]'
       />
-      <p className="text-gray-700 dark:text-gray-300">{error.message}</p>
+      <p className="text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">{error.message}</p>
     </div>
   )
 
   if (!data || !data.user) return (
     <div className="flex justify-center items-center md:min-h-screen md:rounded-lg shadow-lg p-4 space-y-4 md:space-y-0 md:p-6 gap-5">
       <ShieldAlert
-        className='w-10 h-10'
+        className='w-10 h-10 text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)]'
       />
-      <p className="text-gray-700 dark:text-gray-300">User data not found</p>
+      <p className="text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">User data not found</p>
     </div>
   )
 
@@ -66,7 +66,7 @@ const Profile = () => {
   return (
     <div className="w-full h-fit overflow-auto flex flex-col items-center p-6 max-w-3xl mx-auto">
       <div className='w-full'>
-        <div className="profile-header w-full bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6">
+        <div className="profile-header w-full bg-[var(--color-surface-light)] dark:bg-[var(--color-surface-dark)] rounded-lg shadow-md p-6 mb-6">
           <div className="flex flex-col md:flex-row items-center gap-6">
             {/* Profile Image */}
             <div className="profile-image-container">
@@ -74,11 +74,11 @@ const Profile = () => {
                 <img
                   src={user.imageUrl}
                   alt={`${user.name}'s profile`}
-                  className="w-32 h-32 rounded-full object-cover border-4 border-gray-200 dark:border-gray-700"
+                  className="w-32 h-32 rounded-full object-cover border-4 border-[var(--color-border-light)] dark:border-[var(--color-border-dark)]"
                 />
               ) : (
-                <div className="w-32 h-32 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center border-4 border-gray-200 dark:border-gray-700">
-                  <span className="text-2xl font-bold text-gray-600 dark:text-gray-200">
+                <div className="w-32 h-32 rounded-full bg-[var(--color-background-light)] dark:bg-[var(--color-background-dark)] flex items-center justify-center border-4 border-[var(--color-border-light)] dark:border-[var(--color-border-dark)]">
+                  <span className="text-2xl font-bold text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
                     {user.name?.charAt(0) || "?"}
                   </span>
                 </div>
@@ -87,8 +87,8 @@ const Profile = () => {
 
             {/* User Info */}
             <div className="user-info text-center md:text-left">
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{user.name}</h1>
-              <p className="text-gray-600 dark:text-gray-300 mb-2">{user.email}</p>
+              <h1 className="text-2xl font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)]">{user.name}</h1>
+              <p className="text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-2">{user.email}</p>
               <div className="verification-badge flex items-center justify-center md:justify-start gap-2">
                 {user.isVarified ? (
                   <span className="bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-300 text-xs font-medium px-2.5 py-0.5 rounded-full flex items-center">
@@ -98,7 +98,7 @@ const Profile = () => {
                     Verified
                   </span>
                 ) : (
-                  <span className="bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                  <span className="bg-[var(--color-surface-light)] dark:bg-[var(--color-surface-dark)] text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] text-xs font-medium px-2.5 py-0.5 rounded-full">
                     Not Verified
                   </span>
                 )}
@@ -108,11 +108,11 @@ const Profile = () => {
         </div>
 
         {/* Blog Posts Section */}
-        <div className="blog-posts w-full bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-semibold mb-4 border-b border-gray-300 dark:border-gray-600 pb-2 text-gray-900 dark:text-white">
+        <div className="blog-posts w-full bg-[var(--color-surface-light)] dark:bg-[var(--color-surface-dark)] rounded-lg shadow-md p-6">
+          <h2 className="text-xl font-semibold mb-4 border-b border-[var(--color-border-light)] dark:border-[var(--color-border-dark)] pb-2 text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)]">
             Blog Posts
             {totalBlogs > 0 && (
-              <span className="ml-2 text-sm font-normal text-gray-500 dark:text-gray-400">
+              <span className="ml-2 text-sm font-normal text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
                 ({totalBlogs})
               </span>
             )}
@@ -120,23 +120,23 @@ const Profile = () => {
 
           {blogsLoading && !blogs.length ? (
             <div className="flex justify-center py-10">
-              <LoaderCircle className="animate-spin w-8 h-8 text-gray-500" />
+              <LoaderCircle className="animate-spin w-8 h-8 text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]" />
             </div>
           ) : blogsError ? (
             <div className="flex justify-center py-8 text-center">
               <div>
                 <ShieldAlert className="w-8 h-8 mx-auto mb-2 text-red-500" />
-                <p className="text-gray-700 dark:text-gray-300">Failed to load blogs</p>
+                <p className="text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">Failed to load blogs</p>
               </div>
             </div>
           ) : blogs.length === 0 ? (
             <div className="py-8 text-center">
-              <p className="text-gray-600 dark:text-gray-400">No blog posts yet</p>
+              <p className="text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">No blog posts yet</p>
             </div>
           ) : (
             <div className="space-y-6">
               {blogs.map((blog) => (
-                <div key={blog._id} className="blog-card border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
+                <div key={blog._id} className="blog-card border border-[var(--color-border-light)] dark:border-[var(--color-border-dark)] rounded-lg overflow-hidden hover:shadow-md transition-shadow">
                   <Link
                     to={`/blog/${blog.slugParam}`} className="flex flex-col md:flex-row">
                     {blog.imageUrl && (
@@ -144,9 +144,9 @@ const Profile = () => {
                         <img src={blog.imageUrl} alt={blog.title} className="h-48 md:h-full w-full object-cover" />
                       </div>
                     )}
-                    <div className={`blog-content p-4 ${blog.imageUrl ? 'md:w-2/3' : 'w-full'}`}>
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">{blog.title}</h3>
-                      <div className="flex items-center text-sm text-gray-500 dark:text-gray-400 space-x-4 mt-2">
+                    <div className={`blog-content p-4 ${blog.imageUrl ? 'md:w-2/3' : 'w-full'} bg-[var(--color-background-light)] dark:bg-[var(--color-background-dark)]`}>
+                      <h3 className="text-lg font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)] mb-2">{blog.title}</h3>
+                      <div className="flex items-center text-sm text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] space-x-4 mt-2">
                         <span>{new Date(blog.publishedAt || blog.createdAt).toLocaleDateString('en-US', {
                           year: 'numeric',
                           month: 'short',
@@ -162,7 +162,7 @@ const Profile = () => {
               {/* Infinite scroll loading indicator */}
               <div ref={ref} className="flex justify-center py-4">
                 {isFetchingNextPage && (
-                  <LoaderCircle className="animate-spin w-6 h-6 text-gray-500" />
+                  <LoaderCircle className="animate-spin w-6 h-6 text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]" />
                 )}
               </div>
             </div>

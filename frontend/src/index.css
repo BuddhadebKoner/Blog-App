@@ -25,6 +25,30 @@
    /* Surface Colors (for cards, panels, or inner containers) */
    --color-surface-light: #f7f7f7;
    --color-surface-dark: #1e1e1e;
+   
+   /* Button Colors - Primary */
+   --color-button-primary-light: #2563eb;
+   --color-button-primary-dark: #3b82f6;
+   --color-button-primary-hover-light: #1d4ed8;
+   --color-button-primary-hover-dark: #60a5fa;
+   --color-button-primary-text-light: #ffffff;
+   --color-button-primary-text-dark: #ffffff;
+   
+   /* Button Colors - Secondary */
+   --color-button-secondary-light: transparent;
+   --color-button-secondary-dark: transparent;
+   --color-button-secondary-hover-light: #f3f4f6;
+   --color-button-secondary-hover-dark: #374151;
+   --color-button-secondary-text-light: #1f2937;
+   --color-button-secondary-text-dark: #e5e7eb;
+   --color-button-secondary-border-light: #d1d5db;
+   --color-button-secondary-border-dark: #4b5563;
+   
+   /* Button Colors - Disabled */
+   --color-button-disabled-light: #e5e7eb;
+   --color-button-disabled-dark: #374151;
+   --color-button-disabled-text-light: #9ca3af;
+   --color-button-disabled-text-dark: #6b7280;
 }
 
 

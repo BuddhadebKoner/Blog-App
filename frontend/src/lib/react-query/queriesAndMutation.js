@@ -1,7 +1,7 @@
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "./QueryKeys";
 import { isAuthenticated, varifyEmail } from "../api/auth.api.js";
-import { getAllBlogs, getAllBlogsByUserId, getUser, getUserById, login, logOut } from "../api/user.api.js";
+import { getAllBlogs, getAllBlogsByUserId, getUser, getUserById, login, logOut, updateUser } from "../api/user.api.js";
 import { createBlog, getBlogById } from "../api/blog.api.js";
 
 // varify email with otp 
@@ -129,10 +129,23 @@ export const useGetAllBlogs = (limit = 5) => {
 };
 
 // get blog by id
-export const useGetBlogById = (id) => { 
+export const useGetBlogById = (id) => {
    return useQuery({
       queryKey: [QUERY_KEYS.GET_BLOG_BY_ID, id],
       queryFn: () => getBlogById(id),
       refetchOnWindowFocus: false,
    });
 }
+
+// update user
+export const useUpdateUser = () => {
+   const queryClient = useQueryClient();
+
+   return useMutation({
+      mutationFn: updateUser,
+      onSuccess: (data) => {
+         // Update the user data in cache
+         queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.GET_USER] });
+      },
+   });
+};

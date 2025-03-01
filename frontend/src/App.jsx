@@ -5,7 +5,7 @@ import RootLayout from './_root/RootLayout'
 import Signin from './_auth/pages/Signin'
 import Signup from './_auth/pages/Signup'
 import ForgotPassword from './_auth/pages/ForgotPassword.jsx'
-import { About, BlogDetails, Blogs, CreateBlog, Home, Profile, UpdateBlog } from './_root/pages/index.js'
+import { About, BlogDetails, Blogs, CreateBlog, Home, Profile, Settings, UpdateBlog } from './_root/pages/index.js'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -29,6 +29,7 @@ const App = () => {
                <Route path='/blogs' element={<Blogs />} />
                <Route path='/blog/:slugParam' element={<BlogDetails />} />
                <Route path='/create-blog' element={<CreateBlog />} />
+               <Route path='/settings' element={<Settings />} />
                <Route path='/update-blog/:slugParam' element={<UpdateBlog />} />
                <Route path='/profile/:id' element={<Profile />} />
             </Route>
