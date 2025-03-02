@@ -1,14 +1,21 @@
 import React from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { useGetBlogById } from '../../lib/react-query/queriesAndMutation';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useDeleteBlog, useGetBlogById } from '../../lib/react-query/queriesAndMutation';
 import { useAuth } from '../../context/AuthContext';
 import BlogSidebarCard from '../../components/BlogSidebarCard';
-import { CircleUser, Trash } from 'lucide-react';
+import { CircleUser, LoaderCircle, Trash } from 'lucide-react';
 
 const BlogDetails = () => {
   const { slugParam } = useParams();
   const { data, isLoading, isError, error } = useGetBlogById(slugParam);
   const { currentUser } = useAuth();
+
+  const navigate = useNavigate();
+
+  const {
+    mutate: deleteBlog,
+    isLoading: isDeleting,
+  } = useDeleteBlog();
 
   const getYouTubeID = (url) => {
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
@@ -27,6 +34,22 @@ const BlogDetails = () => {
     day: 'numeric'
   });
 
+  if (isDeleting) {
+    return (
+      <div className='flex justify-center items-center md:min-h-screen md:rounded-lg shadow-lg p-4 space-y-4 md:space-y-0 md:p-6 dark:border-[var(--color-border-dark)]'>
+        <LoaderCircle className='animate-spin w-10 h-10' />
+      </div>
+    )
+  }
+
+  const handleDeleteBlog = () => {
+    if (window.confirm('Are you sure you want to delete this blog?')) {
+      deleteBlog(slugParam);
+      navigate(-1);
+      toast.sucess('Blog deleted successfully');
+    }
+  };
+
   return (
     <div className="w-full h-fit overflow-auto bg-transparent  text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)] lg:py-5 py-20 px-6 md:px-20 transition-colors duration-300">
       <section className="max-w-4xl mx-auto">
@@ -43,7 +66,7 @@ const BlogDetails = () => {
           {currentUser?._id === blog.author._id && (
             <button
               className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors cursor-pointer"
-              onClick={() => { /* Add delete functionality */ }}
+              onClick={handleDeleteBlog}
             >
               <Trash className="w-6 h-6" />
             </button>

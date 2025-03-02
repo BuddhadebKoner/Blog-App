@@ -28,6 +28,8 @@ const Blogs = () => {
   const blogs = data?.pages?.flatMap(page => page.blogs) || [];
   const totalBlogs = data?.pages?.[0]?.totalBlogs || 0;
 
+  console.log(blogs);
+
   return (
     <div className="w-full max-w-5xl h-fit overflow-auto mx-auto p-4 md:p-6">
       <div className="w-full mb-8">
@@ -54,7 +56,7 @@ const Blogs = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {blogs.map((blog) => (
-            <BlogCard key={blog._id} blog={blog} />
+            <BlogCard key={blog._id} blog={blog} autherUrl={blog.author.imageUrl} />
           ))}
         </div>
       )}

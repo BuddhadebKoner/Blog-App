@@ -21,7 +21,8 @@ export const getBlogs = async (req, res) => {
 
       // Fetch blogs with pagination and author details
       const blogs = await Blog.find()
-         .populate({ path: "author", select: "name email" })
+         .select("imageUrl title publishedAt createdAt readTime slugParam")
+         .populate({ path: "author", select: "name imageUrl" })
          .skip(skip)
          .limit(limit)
          .sort({ createdAt: -1 })

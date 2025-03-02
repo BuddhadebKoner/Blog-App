@@ -241,7 +241,7 @@ const EditAccountPopup = ({ isOpen, onClose, actionType, userData }) => {
 
    return (
       <>
-         <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center" style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
+         <div className="fixed inset-0 z-40 overflow-y-auto flex items-center justify-center" style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
             <div className="max-w-md w-full mx-4 rounded-lg shadow-xl" style={{
                backgroundColor: 'var(--color-background-light)',
                '@media (prefers-color-scheme: dark)': { backgroundColor: 'var(--color-surface-dark)' }

@@ -40,7 +40,7 @@ const Sidebar = ({ isAuthenticated, currentUser, isSidebarOpen, toggleSidebar })
             />
          )}
 
-         <aside className={`fixed md:static w-[280px] md:w-64 h-full md:h-[calc(100vh-3rem)] z-50
+         <aside className={`fixed md:static w-[280px] md:w-64 h-full md:h-[calc(100vh-3rem)] z-40
                       bg-[var(--color-surface-light)] dark:bg-[var(--color-surface-dark)]
                       rounded-none md:rounded-r-none md:rounded-l-xl
                       shadow-lg transition-all duration-300 ease-in-out flex flex-col justify-between 

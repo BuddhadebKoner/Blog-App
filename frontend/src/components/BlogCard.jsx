@@ -20,9 +20,19 @@ const BlogCard = ({ blog, className = '' }) => {
                {/* Author info */}
                <div className="flex items-center mb-3">
                   <div className="w-8 h-8 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center mr-2">
-                     <span className="text-xs font-medium text-gray-700 dark:text-gray-300">
-                        {blog.author?.name?.charAt(0) || "?"}
-                     </span>
+                     {
+                        blog.author?.imageUrl ? (
+                           <img
+                              src={blog.author.imageUrl}
+                              alt={blog.author.name}
+                              className="w-full h-full object-cover rounded-full"
+                           />
+                        ) : (
+                           <span className="text-xs font-medium text-gray-700 dark:text-gray-300">
+                              {blog.author?.name?.charAt(0) || "?"}
+                           </span>
+                        )
+                     }
                   </div>
                   <span className="text-sm text-gray-700 dark:text-gray-300 truncate">
                      {blog.author?.name || "Anonymous"}
