@@ -14,7 +14,6 @@ bower_components/
 # Build directories
 dist/
 build/
-public/
 
 # Next.js build output
 .next/
@@ -92,7 +91,6 @@ $RECYCLE.BIN/
 
 # Gatsby files
 .cache/
-public/
 
 # FuseBox cache
 .fusebox/
