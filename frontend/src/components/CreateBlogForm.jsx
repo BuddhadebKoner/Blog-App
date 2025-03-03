@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { createBlog } from '../lib/api/blog.api'
-import { LoaderCircle } from 'lucide-react'
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 

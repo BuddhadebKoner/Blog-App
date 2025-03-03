@@ -1,1 +1,1 @@
-export const DB_NAME = 'auth-app';
+export const DB_NAME = 'blog-app';

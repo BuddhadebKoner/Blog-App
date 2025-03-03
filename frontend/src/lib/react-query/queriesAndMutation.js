@@ -151,7 +151,7 @@ export const useUpdateUser = () => {
 };
 
 // delete blog
-export const useDeleteBlog = () => { 
+export const useDeleteBlog = () => {
    const queryClient = useQueryClient();
 
    return useMutation({

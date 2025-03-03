@@ -3,6 +3,7 @@ import CreateBlogForm from '../../components/CreateBlogForm'
 import PreviewBlogForm from '../../components/PreviewBlogForm'
 import { useAuth } from '../../context/AuthContext'
 import { LoaderCircle } from 'lucide-react'
+import { Helmet } from 'react-helmet'
 
 const CreateBlog = () => {
   const [title, setTitle] = useState('')
@@ -27,37 +28,43 @@ const CreateBlog = () => {
   }
 
   return (
-    <div className="flex-1 min-h-0 w-full h-screen flex overflow-hidden">
-      <div className="flex flex-1 min-h-0 overflow-hidden">
-        <CreateBlogForm
-          className="flex-1 min-h-0 overflow-y-auto"
-          title={title}
-          setTitle={setTitle}
-          videoLink={videoLink}
-          setVideoLink={setVideoLink}
-          readTime={readTime}
-          setReadTime={setReadTime}
-          slugParam={slugParam}
-          setSlugParam={setSlugParam}
-          content={content}
-          setContent={setContent}
-          setImageUrl={setImageUrl}
-          currentUser={currentUser}
-          setLoading={setLoading}
-          loading={loading}
-        />
-        <PreviewBlogForm
-          className="flex-1 min-h-0 overflow-y-auto"
-          title={title}
-          videoLink={videoLink}
-          readTime={readTime}
-          slugParam={slugParam}
-          content={content}
-          currentUser={currentUser}
-          imageUrl={imageUrl}
-        />
+    <>
+      <Helmet>
+        <title>Create Blog - Blog</title>
+      </Helmet>
+
+      <div className="flex-1 min-h-0 w-full h-screen flex overflow-hidden">
+        <div className="flex flex-1 min-h-0 overflow-hidden">
+          <CreateBlogForm
+            className="flex-1 min-h-0 overflow-y-auto"
+            title={title}
+            setTitle={setTitle}
+            videoLink={videoLink}
+            setVideoLink={setVideoLink}
+            readTime={readTime}
+            setReadTime={setReadTime}
+            slugParam={slugParam}
+            setSlugParam={setSlugParam}
+            content={content}
+            setContent={setContent}
+            setImageUrl={setImageUrl}
+            currentUser={currentUser}
+            setLoading={setLoading}
+            loading={loading}
+          />
+          <PreviewBlogForm
+            className="flex-1 min-h-0 overflow-y-auto"
+            title={title}
+            videoLink={videoLink}
+            readTime={readTime}
+            slugParam={slugParam}
+            content={content}
+            currentUser={currentUser}
+            imageUrl={imageUrl}
+          />
+        </div>
       </div>
-    </div>
+    </>
   )
 }
 

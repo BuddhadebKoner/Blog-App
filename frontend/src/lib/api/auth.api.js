@@ -20,9 +20,19 @@ export const isAuthenticated = async () => {
       return response.data;
    } catch (error) {
       console.error("Is Authenticated Error:", error);
+
+      // Important: For network errors, don't return an object, throw the error
+      // so it can be caught by the useQuery error handler
+      if (error.code === "ERR_NETWORK" ||
+         error.message === "Network Error" ||
+         (error.name === "AxiosError" && error.message === "Network Error")) {
+         throw error;
+      }
+
+      // For other errors (like 401, 500, etc.), return a formatted response
       return {
          success: false,
-         message: error.response?.data?.message || "Something went wrong"
+         message: error.response?.data?.message || "Authentication failed"
       };
    }
 };

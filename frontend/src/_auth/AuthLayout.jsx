@@ -6,7 +6,7 @@ import { useEffect } from "react";
 
 const AuthLayout = () => {
 
-  const { isAuthenticated, isAuthenticatedLoading } = useAuth();
+  const { isAuthenticated, isAuthenticatedLoading, serverStatus } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -14,6 +14,10 @@ const AuthLayout = () => {
       navigate('/');
     }
   }, [isAuthenticated, isAuthenticatedLoading]);
+
+  if (!serverStatus.isRunning) {
+    return;
+  }
 
   return (
     <section

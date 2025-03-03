@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { LoaderCircle, Menu } from 'lucide-react';
 
 const RootLayout = () => {
-  const { isAuthenticated, currentUser, isAuthenticatedLoading } = useAuth();
+  const { isAuthenticated, currentUser, isAuthenticatedLoading, serverStatus } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const toggleSidebar = (forcedState) => {
@@ -15,6 +15,10 @@ const RootLayout = () => {
       setIsSidebarOpen(prev => !prev);
     }
   };
+
+  if (!serverStatus.isRunning) {
+    return;
+  }
 
   return (
     <section className='w-full h-screen flex flex-col
@@ -44,7 +48,7 @@ const RootLayout = () => {
                         bg-[var(--color-surface-light)] dark:bg-[var(--color-surface-dark)] 
                         rounded-none md:rounded-l-none md:rounded-r-xl
                          transition-colors duration-300 shadow-lg'>
-                
+
                 {/* Mobile hamburger menu button */}
                 <div className="md:hidden p-4 border-b border-[var(--color-border-light)] dark:border-[var(--color-border-dark)]">
                   <button
@@ -54,7 +58,7 @@ const RootLayout = () => {
                     <Menu size={24} />
                   </button>
                 </div>
-                
+
                 <Outlet />
               </main>
             </div>

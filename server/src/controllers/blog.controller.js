@@ -87,30 +87,43 @@ export const createBlog = async (req, res) => {
       const { author, title, videoLink, readTime, slugParam: originalSlugParam, content } = req.body;
       const blogImage = req.files?.blogImage?.[0]?.path;
 
+      // Check if all required fields are present
       if (!author || !title || !videoLink || !readTime || !originalSlugParam || !content) {
-         fs.unlinkSync(blogImage);
+         if (blogImage) fs.unlinkSync(blogImage);
          return res.status(400).json({
             success: false,
             message: "All fields are required."
          });
       }
 
-      // remove space add hyphen and convert to lowercase
-      const slugParam = originalSlugParam.replace(/\s+/g, "-").toLowerCase();
+      // Process slugParam - remove spaces, convert to lowercase, remove special characters
+      const slugParam = originalSlugParam
+         .replace(/\s+/g, "-")
+         .toLowerCase()
+         .replace(/[^a-zA-Z0-9-]/g, "");
 
-      // Convert content string to an array
+      // Validate slugParam is not empty after processing
+      if (!slugParam) {
+         if (blogImage) fs.unlinkSync(blogImage);
+         return res.status(400).json({
+            success: false,
+            message: "Invalid slug. Please provide a slug that contains alphanumeric characters."
+         });
+      }
+
+      // Parse and validate content
       let parsedContent;
       try {
          parsedContent = JSON.parse(content);
          if (!Array.isArray(parsedContent) || parsedContent.some(item => !item.type || !item.value)) {
-            fs.unlinkSync(blogImage);
+            if (blogImage) fs.unlinkSync(blogImage);
             return res.status(400).json({
                success: false,
                message: "Invalid content format."
             });
          }
       } catch (err) {
-         fs.unlinkSync(blogImage);
+         if (blogImage) fs.unlinkSync(blogImage);
          return res.status(400).json({
             success: false,
             message: "Content must be a valid JSON array."
@@ -120,7 +133,7 @@ export const createBlog = async (req, res) => {
       // Check if slug exists
       const isExists = await Blog.findOne({ slugParam });
       if (isExists) {
-         fs.unlinkSync(blogImage);
+         if (blogImage) fs.unlinkSync(blogImage);
          return res.status(400).json({
             success: false,
             message: "Slug already exists. Enter a unique slug.",
@@ -130,7 +143,7 @@ export const createBlog = async (req, res) => {
       // Check if author exists
       const isUserExists = await UserAuth.findById(author);
       if (!isUserExists) {
-         fs.unlinkSync(blogImage);
+         if (blogImage) fs.unlinkSync(blogImage);
          return res.status(404).json({
             success: false,
             message: "Author not found.",
@@ -139,7 +152,6 @@ export const createBlog = async (req, res) => {
 
       // Validate and process image
       if (!blogImage) {
-         fs.unlinkSync(blogImage);
          return res.status(400).json({
             success: false,
             message: "Image is required."
@@ -147,8 +159,8 @@ export const createBlog = async (req, res) => {
       }
 
       const image = await uploadOnCloudinary(blogImage);
-      if (!image.url) {
-         fs.unlinkSync(blogImage);
+      if (!image?.url) {
+         if (blogImage) fs.unlinkSync(blogImage);
          return res.status(400).json({
             success: false,
             message: "Image upload failed."
@@ -156,30 +168,23 @@ export const createBlog = async (req, res) => {
       }
 
       const publishedAt = new Date();
-      const newBlog = await Blog.create({
+
+      // Create the blog with explicit field names matching the schema
+      const newBlog = new Blog({
          author,
          title,
          imageUrl: image.url,
          imageId: image.public_id,
          videoLink,
          readTime,
-         slugParam,
+         slugParam, // Ensure this matches exactly with your schema
          content: parsedContent,
          isPublished: true,
          publishedAt
       });
 
-      if (!newBlog) {
-         fs.unlinkSync(blogImage);
-         return res.status(500).json({
-            success: false,
-            message: "Blog creation failed."
-         });
-      }
-
-      // update user with blog id
-      const userUpdateResult = await UserAuth.findByIdAndUpdate(author, { $push: { blogs: newBlog._id } });
-      // console.log(userUpdateResult);
+      // Save the blog
+      await newBlog.save();
 
       return res.status(201).json({
          success: true,
@@ -187,14 +192,14 @@ export const createBlog = async (req, res) => {
          blog: newBlog,
       });
    } catch (error) {
-      console.error(error);
+      console.error("Full error:", error);
       return res.status(500).json({
          success: false,
-         message: "Internal Server Error",
+         message: "Internal Server Error: " + error.message,
+         code: error.code
       });
    }
 };
-
 // update a blog
 export const updateBlog = async (req, res) => {
    try {
