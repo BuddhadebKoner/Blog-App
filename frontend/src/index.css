@@ -25,7 +25,7 @@
    /* Surface Colors (for cards, panels, or inner containers) */
    --color-surface-light: #f7f7f7;
    --color-surface-dark: #1e1e1e;
-   
+
    /* Button Colors - Primary */
    --color-button-primary-light: #2563eb;
    --color-button-primary-dark: #3b82f6;
@@ -33,7 +33,7 @@
    --color-button-primary-hover-dark: #60a5fa;
    --color-button-primary-text-light: #ffffff;
    --color-button-primary-text-dark: #ffffff;
-   
+
    /* Button Colors - Secondary */
    --color-button-secondary-light: transparent;
    --color-button-secondary-dark: transparent;
@@ -43,7 +43,7 @@
    --color-button-secondary-text-dark: #e5e7eb;
    --color-button-secondary-border-light: #d1d5db;
    --color-button-secondary-border-dark: #4b5563;
-   
+
    /* Button Colors - Disabled */
    --color-button-disabled-light: #e5e7eb;
    --color-button-disabled-dark: #374151;
@@ -60,6 +60,24 @@ body {
    margin: 0;
    padding: 0;
    box-sizing: border-box;
+}
+
+
+/* Add this to your global CSS or component styles: */
+@keyframes slideDown {
+   from {
+      transform: translateY(-1rem);
+      opacity: 0;
+   }
+
+   to {
+      transform: translateY(0);
+      opacity: 1;
+   }
+}
+
+.animate-slideDown {
+   animation: slideDown 0.2s ease-out forwards;
 }
 
 /* Improve scrollbar styling */

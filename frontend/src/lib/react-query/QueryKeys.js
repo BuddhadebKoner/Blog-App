@@ -14,4 +14,5 @@ export const QUERY_KEYS = {
    GET_ALL_BLOGS_BY_USER_ID: "get-all-blogs-by-user-id",
    GET_ALL_BLOGS: "get-all-blogs",
    GET_BLOG_BY_ID: "get-blog-by-id",
+   GET_RECENT_BLOGS: "get-recent-blogs",
 };

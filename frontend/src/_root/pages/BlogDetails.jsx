@@ -5,6 +5,7 @@ import { useAuth } from '../../context/AuthContext';
 import BlogSidebarCard from '../../components/BlogSidebarCard';
 import { CircleUser, LoaderCircle, Trash } from 'lucide-react';
 import { Helmet } from "react-helmet";
+import { convertUrlsToLinks } from '../../lib/utils.jsx';
 
 const BlogDetails = () => {
   const { slugParam } = useParams();
@@ -58,7 +59,7 @@ const BlogDetails = () => {
       </Helmet>
       <div className="w-full h-fit overflow-auto bg-transparent  text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)] lg:py-5 py-20 px-6 md:px-20 transition-colors duration-300">
         <section className="max-w-4xl mx-auto">
-          <div className="flex justify-between items-center mb-6">
+          <div className="flex justify-between items-center mb-3">
             <p className="text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] text-base py-5">
               <Link
                 to="/blogs"
@@ -124,33 +125,39 @@ const BlogDetails = () => {
               </div>
             </div>
 
-            <div className="prose dark:prose-invert max-w-none">
+            <div className="prose dark:prose-invert max-w-none px-4">
               {blog.content.map((item) => (
-                <div key={item._id} className="mb-6">
+                <div key={item._id}>
                   {item.type === 'text' && (
-                    <p className="text-lg leading-relaxed text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)]">
-                      {item.value}
+                    <p className="text-lg leading-relaxed text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)] mb-4">
+                      {/* Convert URLs in text to clickable links */}
+                      {convertUrlsToLinks(item.value, 'text-[var(--color-button-primary-light)] dark:text-[var(--color-button-primary-dark)] hover:underline')}
                     </p>
                   )}
+
                   {item.type === 'heading' && (
-                    <h2 className="text-2xl font-bold mt-8 mb-4 text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)]">
+                    <h2 className="text-3xl font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)] mb-5">
                       {item.value}
                     </h2>
                   )}
+
                   {item.type === 'bold' && (
-                    <p className="text-lg font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)]">
+                    <p className="text-lg font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)] mb-3">
                       {item.value}
                     </p>
                   )}
+
                   {item.type === 'highlight' && (
-                    <span className="text-lg bg-[var(--color-accent-dark)] dark:bg-[var(--color-accent-light)] text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)] px-2 py-1 inline-block rounded">
+                    <span className="text-lg bg-[var(--color-accent-light)] dark:bg-[var(--color-accent-dark)] text-[var(--color-background-light)] dark:text-[var(--color-background-dark)] px-3 py-1 rounded-md inline-block mb-5">
                       {item.value}
                     </span>
                   )}
+
                   {item.type === 'code' && (
-                    <pre className="bg-[var(--color-surface-light)] dark:bg-[var(--color-surface-dark)] p-4 rounded-md overflow-x-auto text-sm">
-                      <code className="text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)]">
-                        {item.value}
+                    <pre className="bg-[var(--color-surface-light)] dark:bg-[var(--color-surface-dark)] p-3 rounded-lg overflow-x-auto text-sm border border-[var(--color-border-light)] dark:border-[var(--color-border-dark)] shadow-sm mb-3">
+                      <code className="text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)] font-mono">
+                        {/* Convert URLs in code to clickable links */}
+                        {convertUrlsToLinks(item.value, 'text-[var(--color-button-primary-light)] dark:text-[var(--color-button-primary-dark)]')}
                       </code>
                     </pre>
                   )}
@@ -183,3 +190,5 @@ const BlogDetails = () => {
 };
 
 export default BlogDetails;
+
+

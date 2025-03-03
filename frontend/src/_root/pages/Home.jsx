@@ -1,57 +1,20 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { TrendingUp, BookOpen, Users, ArrowRight } from 'lucide-react';
+import { TrendingUp, BookOpen, Users, ArrowRight, LoaderCircle } from 'lucide-react';
 import BlogCard from '../../components/BlogCard';
 import { Helmet } from 'react-helmet';
+import { useGetRecentBlogs } from '../../lib/react-query/queriesAndMutation';
 
 const Home = () => {
   const navigate = useNavigate();
 
-  // Hardcoded recent blogs data
-  const featuredBlogs = [
-    {
-      _id: "blog1",
-      title: "Getting Started with React in 2025",
-      content: "React continues to evolve with new features and improvements. In this guide, we'll explore the latest best practices for building modern React applications.",
-      imageUrl: "/api/placeholder/400/250",
-      readTime: "5 min read",
-      tags: ["React", "JavaScript", "Web Development"],
-      createdAt: "2025-02-15T10:30:00Z",
-      author: {
-        _id: "user1",
-        name: "Alex Morgan",
-        imageUrl: "/api/placeholder/40/40"
-      }
-    },
-    {
-      _id: "blog2",
-      title: "The Future of AI in Content Creation",
-      content: "Artificial Intelligence is transforming how we create and consume content. Discover the latest trends and tools that are shaping the future of digital content.",
-      imageUrl: "/api/placeholder/400/250",
-      readTime: "8 min read",
-      tags: ["AI", "Content", "Technology"],
-      createdAt: "2025-02-10T14:15:00Z",
-      author: {
-        _id: "user2",
-        name: "Jamie Chen",
-        imageUrl: "/api/placeholder/40/40"
-      }
-    },
-    {
-      _id: "blog3",
-      title: "Building Responsive Layouts with CSS Grid",
-      content: "CSS Grid has revolutionized web layout design. Learn how to create complex, responsive layouts with less code and better browser support.",
-      imageUrl: "/api/placeholder/400/250",
-      readTime: "6 min read",
-      tags: ["CSS", "Web Design", "Frontend"],
-      createdAt: "2025-02-05T09:45:00Z",
-      author: {
-        _id: "user3",
-        name: "Taylor Wilson",
-        imageUrl: "/api/placeholder/40/40"
-      }
-    }
-  ];
+  const {
+    data: recentBlogs = [],
+    isLoading,
+  } = useGetRecentBlogs();
+
+  // Make sure we're dealing with an array by checking the shape of the data
+  const blogs = Array.isArray(recentBlogs) ? recentBlogs : (recentBlogs?.recentBlogs || []);
 
   return (
     <>
@@ -98,11 +61,21 @@ const Home = () => {
               </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {featuredBlogs.map((blog) => (
-                <BlogCard key={blog._id} blog={blog} autherUrl={blog.author.imageUrl} />
-              ))}
-            </div>
+            {
+              isLoading ? (
+                <div className="flex justify-center items-center py-8">
+                  <LoaderCircle className='animate-spin w-10 h-10' />
+                </div>
+              ) : blogs.length === 0 ? (
+                <p className="text-center py-8 text-gray-600 dark:text-gray-400">No blogs available at the moment.</p>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {blogs.map((blog) => (
+                    <BlogCard key={blog._id} blog={blog} autherUrl={blog?.author?.imageUrl} />
+                  ))}
+                </div>
+              )
+            }
           </div>
         </section>
 

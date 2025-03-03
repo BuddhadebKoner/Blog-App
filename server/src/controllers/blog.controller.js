@@ -378,3 +378,26 @@ export const getAllBlogsByAuthor = async (req, res) => {
 
    }
 };
+
+// return most resent 3 blogs
+export const getRecentThreeBlogs = async (req, res) => {
+   try {
+      const recentBlogs = await Blog.find()
+         .select("title imageUrl readTime slugParam publishedAt")
+         .populate({ path: "author", select: "name imageUrl" })
+         .sort({ createdAt: -1 })
+         .limit(3)
+         .lean();
+
+      return res.status(200).json({
+         success: true,
+         message: "Recent blogs fetched successfully.",
+         recentBlogs,
+      });
+   } catch (error) {
+      return res.status(500).json({
+         success: false,
+         message: "Internal Server Error",
+      });
+   }
+};

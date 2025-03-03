@@ -73,3 +73,16 @@ export const deleteBlog = async (id) => {
       };
    }
 };
+
+// get recent three blogs
+export const getRecentThreeBlogs = async () => {
+   try {
+      const response = await axiosInstance.get('/api/blog/get-recent-three-blogs');
+      return response.data;
+   } catch (error) {
+      return {
+         success: false,
+         message: error.response?.data?.message || "Something went wrong",
+      };
+   }
+};

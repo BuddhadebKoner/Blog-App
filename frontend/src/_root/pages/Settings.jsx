@@ -1,10 +1,11 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useUpdateUser } from '../../lib/react-query/queriesAndMutation';
-import { LoaderCircle, User, Mail, Calendar, CheckCircle, X } from 'lucide-react';
+import { LoaderCircle, User, Mail, Calendar, CheckCircle, X, ShieldQuestion } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { format } from 'date-fns';
 import { Helmet } from 'react-helmet';
+import { Link } from 'react-router-dom';
 
 const Settings = () => {
   const { isAuthenticated, isAuthenticatedLoading, currentUser } = useAuth();
@@ -192,8 +193,24 @@ const Settings = () => {
   // Not authenticated state
   if (!isAuthenticated) {
     return (
-      <div className="bg-[var(--color-background-light)] text-[var(--color-text-primary-light)] dark:bg-[var(--color-background-dark)] dark:text-[var(--color-text-primary-dark)] text-center py-8">
-        Please login to access settings
+      <div className='flex gap-5 justify-center items-center md:min-h-screen md:rounded-lg shadow-lg p-4 space-y-4 md:space-y-0 md:p-6 dark:border-[var(--color-border-dark)]'>
+        <ShieldQuestion className='w-10 h-10' />
+        <p>
+          Please{" "}
+          <Link
+            to={'/sign-in'}
+            className='text-blue-500 hover:underline'>
+            Sign In
+          </Link>
+          {" "}or{" "}
+          <Link
+            to={'/sign-up'}
+            className='text-blue-500 hover:underline'
+          >
+            Sign Up
+          </Link>
+          {" "}to view this page
+        </p>
       </div>
     );
   }

@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import { createBlog } from '../lib/api/blog.api'
 import { toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { ArrowLeft, House } from 'lucide-react';
 
 
 const CreateBlogForm = ({
@@ -115,9 +116,14 @@ const CreateBlogForm = ({
 
     return (
         <div className={`${className} px-4 py-[2.5vh] w-full lg:w-1/2 overflow-y-auto h-full`}>
-            <h1 className="text-2xl font-semibold text-gray-900 dark:text-white text-center mb-6">
-                Create New Blog
-            </h1>
+            <div className="w-full flex items-center justify-start mb-6  gap-3">
+                <ArrowLeft
+                    onClick={() => navigate(-1)}
+                    className="w-6 h-6 inline-block mr-2 cursor-pointer" />
+                <h1 className='text-2xl font-semibold text-gray-900 dark:text-white text-center'>
+                    Create New Blog
+                </h1>
+            </div>
             <form onSubmit={handleSubmit} className="space-y-4 overflow-auto">
                 {serverError && (
                     <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
@@ -125,7 +131,7 @@ const CreateBlogForm = ({
                     </div>
                 )}
                 {/* Title */}
-                <div>
+                <div className='px-1'>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                         Title *
                     </label>
@@ -139,7 +145,7 @@ const CreateBlogForm = ({
                     {errors.title && <p className="text-red-500 text-sm mt-1">{errors.title}</p>}
                 </div>
                 {/* Blog Image */}
-                <div>
+                <div className='px-1'>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                         Blog Image
                     </label>
@@ -154,7 +160,7 @@ const CreateBlogForm = ({
                     {errors.blogImage && <p className="text-red-500 text-sm mt-1">{errors.blogImage}</p>}
                 </div>
                 {/* Video Link */}
-                <div>
+                <div className='px-1'>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                         Video Link
                     </label>
@@ -167,7 +173,7 @@ const CreateBlogForm = ({
                     />
                 </div>
                 {/* Read Time */}
-                <div>
+                <div className='px-1'>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                         Read Time
                     </label>
@@ -181,7 +187,7 @@ const CreateBlogForm = ({
                     />
                 </div>
                 {/* Slug Param */}
-                <div>
+                <div className='px-1'>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                         Slug Param *
                     </label>

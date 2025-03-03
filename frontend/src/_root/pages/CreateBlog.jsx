@@ -2,8 +2,9 @@ import React, { useState } from 'react'
 import CreateBlogForm from '../../components/CreateBlogForm'
 import PreviewBlogForm from '../../components/PreviewBlogForm'
 import { useAuth } from '../../context/AuthContext'
-import { LoaderCircle } from 'lucide-react'
+import { LoaderCircle, ShieldQuestion } from 'lucide-react'
 import { Helmet } from 'react-helmet'
+import { Link } from 'react-router-dom'
 
 const CreateBlog = () => {
   const [title, setTitle] = useState('')
@@ -26,6 +27,30 @@ const CreateBlog = () => {
       </div>
     )
   }
+
+  if (!isAuthenticated || currentUser === null) {
+    return (
+      <div className='flex gap-5 justify-center items-center md:min-h-screen md:rounded-lg shadow-lg p-4 space-y-4 md:space-y-0 md:p-6 dark:border-[var(--color-border-dark)]'>
+        <ShieldQuestion className='w-10 h-10' />
+        <p>
+          Please{" "}
+          <Link
+            to={'/sign-in'}
+            className='text-blue-500 hover:underline'>
+            Sign In
+          </Link>
+          {" "}or{" "}
+          <Link
+            to={'/sign-up'}
+            className='text-blue-500 hover:underline'
+          >
+            Sign Up
+          </Link>
+          {" "}to view this page
+        </p>
+      </div>
+    )
+  };
 
   return (
     <>

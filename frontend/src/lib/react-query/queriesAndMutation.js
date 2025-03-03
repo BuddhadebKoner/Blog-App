@@ -2,7 +2,7 @@ import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tansta
 import { QUERY_KEYS } from "./QueryKeys";
 import { isAuthenticated, varifyEmail } from "../api/auth.api.js";
 import { getUser, getUserById, login, logOut, updateUser } from "../api/user.api.js";
-import { createBlog, deleteBlog, getAllBlogs, getAllBlogsByUserId, getBlogById } from "../api/blog.api.js";
+import { createBlog, deleteBlog, getAllBlogs, getAllBlogsByUserId, getBlogById, getRecentThreeBlogs } from "../api/blog.api.js";
 
 // varify email with otp 
 export const useVerifyEmail = () => {
@@ -63,7 +63,6 @@ export const useGetUser = () => {
    return useQuery({
       queryKey: [QUERY_KEYS.GET_USER],
       queryFn: getUser,
-      staleTime: 1000 * 60 * 5,
       refetchOnWindowFocus: false,
    });
 };
@@ -73,7 +72,6 @@ export const useGetUserById = (id) => {
    return useQuery({
       queryKey: [QUERY_KEYS.GET_USER_BY_ID, id],
       queryFn: () => getUserById(id),
-      staleTime: 1000 * 60 * 5,
       refetchOnWindowFocus: false,
    });
 };
@@ -161,5 +159,14 @@ export const useDeleteBlog = () => {
             queryClient.invalidateQueries([QUERY_KEYS.GET_BLOGS]);
          }
       },
+   });
+};
+
+// get recent three blogs
+export const useGetRecentBlogs = () => {
+   return useQuery({
+      queryKey: [QUERY_KEYS.GET_RECENT_BLOGS],
+      queryFn: getRecentThreeBlogs,
+      refetchOnWindowFocus: false,
    });
 };

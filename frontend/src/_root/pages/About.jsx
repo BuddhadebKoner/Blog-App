@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Mail, Users, MessageSquare, BookOpen } from 'lucide-react';
+import { Mail, Users, MessageSquare, BookOpen, Github, LinkedinIcon } from 'lucide-react';
 import { Helmet } from 'react-helmet';
 
 const About = () => {
@@ -10,32 +10,18 @@ const About = () => {
   const teamMembers = [
     {
       id: 1,
-      name: "Alex Morgan",
-      role: "Founder & Editor",
-      bio: "Alex has over 10 years of experience in digital content creation and curation.",
-      imageUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=256"
+      name: "Buddhadeb Koner",
+      role: "Full Stack Developer",
+      bio: "Buddhadeb has over 3 years of experience in digital content creation and curation.",
+      imageUrl: "https://res.cloudinary.com/dsfztnp9x/image/upload/v1740932921/mern-blog/fawqn5nri6ekrslfpe52.jpg"
     },
-    {
-      id: 2,
-      name: "Jamie Chen",
-      role: "Senior Writer",
-      bio: "Jamie specializes in technology trends and innovation in the digital space.",
-      imageUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=256"
-    },
-    {
-      id: 3,
-      name: "Taylor Wilson",
-      role: "Community Manager",
-      bio: "Taylor builds and nurtures our growing community of readers and contributors.",
-      imageUrl: "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=256"
-    }
   ];
 
   // Stats data
   const stats = [
-    { id: 1, label: "Articles Published", value: "500+", icon: BookOpen },
-    { id: 2, label: "Community Members", value: "10,000+", icon: Users },
-    { id: 3, label: "Reader Comments", value: "25,000+", icon: MessageSquare }
+    { id: 1, label: "Articles Published", value: "0+", icon: BookOpen },
+    { id: 2, label: "Community Members", value: "0+", icon: Users },
+    { id: 3, label: "Reader Comments", value: "0+", icon: MessageSquare }
   ];
 
   return (
@@ -147,56 +133,56 @@ const About = () => {
         <section className="w-full px-4 py-16">
           <div className="max-w-5xl mx-auto">
             <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-12 text-center">
-              Meet Our Team
+              Founder
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {teamMembers.map((member) => (
-                <div key={member.id} className="flex flex-col items-center text-center p-6 rounded-lg border border-[var(--color-border-light)] dark:border-[var(--color-border-dark)]">
-                  <div className="w-24 h-24 rounded-full overflow-hidden mb-4">
-                    <img
-                      src="/api/placeholder/100/100"
-                      alt={member.name}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-1">{member.name}</h3>
-                  <p className="text-[var(--color-button-primary-light)] dark:text-[var(--color-button-primary-dark)] mb-3">{member.role}</p>
-                  <p className="text-gray-600 dark:text-gray-400 mb-4">{member.bio}</p>
+            <div className="lg:w-1/3 w-full flex flex-col space-y-8 mx-auto">
+            {teamMembers.map((member) => (
+              <div key={member.id} className="flex flex-col items-center text-center p-6 rounded-lg border border-[var(--color-border-light)] dark:border-[var(--color-border-dark)]">
+                <div className="w-24 h-24 rounded-full overflow-hidden mb-4">
+                  <img
+                    src={member?.imageUrl}
+                    alt={member.name}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
-              ))}
-            </div>
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-1">{member.name}</h3>
+                <p className="text-[var(--color-button-primary-light)] dark:text-[var(--color-button-primary-dark)] mb-3">{member.role}</p>
+                <p className="text-gray-600 dark:text-gray-400 mb-4">{member.bio}</p>
+              </div>
+            ))}
           </div>
-        </section>
+      </div>
+    </section >
 
-        {/* Contact Section */}
-        <section className="w-full px-4 py-16 bg-[var(--color-surface-light)] dark:bg-[var(--color-surface-dark)] rounded-lg mb-16">
-          <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
-              Get in Touch
-            </h2>
-            <p className="text-gray-600 dark:text-gray-400 mb-8">
-              Have questions, feedback, or just want to say hello? We'd love to hear from you!
-            </p>
-            <div className="flex justify-center space-x-6 mb-8">
-              <a href="mailto:info@yourblog.com" className="text-[var(--color-button-primary-light)] dark:text-[var(--color-button-primary-dark)] hover:opacity-80 transition-opacity">
-                <Mail className="w-6 h-6" />
-              </a>
-              {/* <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="text-[var(--color-button-primary-light)] dark:text-[var(--color-button-primary-dark)] hover:opacity-80 transition-opacity">
+      {/* Contact Section */ }
+      < section className = "w-full px-4 py-16 bg-[var(--color-surface-light)] dark:bg-[var(--color-surface-dark)] rounded-lg mb-16" >
+        <div className="max-w-3xl mx-auto text-center">
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
+            Get in Touch
+          </h2>
+          <p className="text-gray-600 dark:text-gray-400 mb-8">
+            Have questions, feedback, or just want to say hello? We'd love to hear from you!
+          </p>
+          <div className="flex justify-center space-x-6 mb-8">
+            <a href="mailto:iambuddhadebkoner@gmail.com" className="text-[var(--color-button-primary-light)] dark:text-[var(--color-button-primary-dark)] hover:opacity-80 transition-opacity">
+              <Mail className="w-6 h-6" />
+            </a>
+            <a href="https://github.com/BuddhadebKoner" target="_blank" rel="noopener noreferrer" className="text-[var(--color-button-primary-light)] dark:text-[var(--color-button-primary-dark)] hover:opacity-80 transition-opacity">
               <Github className="w-6 h-6" />
             </a>
-            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-[var(--color-button-primary-light)] dark:text-[var(--color-button-primary-dark)] hover:opacity-80 transition-opacity">
+            <a href="https://www.linkedin.com/in/buddhadeb-koner/" target="_blank" rel="noopener noreferrer" className="text-[var(--color-button-primary-light)] dark:text-[var(--color-button-primary-dark)] hover:opacity-80 transition-opacity">
               <LinkedinIcon className="w-6 h-6" />
-            </a> */}
-            </div>
-            <button
-              onClick={() => navigate('/blogs')}
-              className="px-6 py-3 bg-[var(--color-button-primary-light)] dark:bg-[var(--color-button-primary-dark)] text-[var(--color-button-primary-text-light)] dark:text-[var(--color-button-primary-text-dark)] rounded-lg font-medium hover:bg-[var(--color-button-primary-hover-light)] dark:hover:bg-[var(--color-button-primary-hover-dark)] transition-colors"
-            >
-              Explore Our Blog
-            </button>
+            </a>
           </div>
-        </section>
-      </div>
+          <button
+            onClick={() => navigate('/blogs')}
+            className="px-6 py-3 bg-[var(--color-button-primary-light)] dark:bg-[var(--color-button-primary-dark)] text-[var(--color-button-primary-text-light)] dark:text-[var(--color-button-primary-text-dark)] rounded-lg font-medium hover:bg-[var(--color-button-primary-hover-light)] dark:hover:bg-[var(--color-button-primary-hover-dark)] transition-colors"
+          >
+            Explore Our Blog
+          </button>
+        </div>
+        </section >
+      </div >
     </>
   );
 };
