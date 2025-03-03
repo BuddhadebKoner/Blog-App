@@ -12,6 +12,7 @@ import OfflineDetector from './components/OfflineDetector.jsx';
 import { useAuth } from './context/AuthContext.jsx';
 import { ShieldAlert } from 'lucide-react';
 
+
 const App = () => {
    const { serverStatus } = useAuth();
 

@@ -29,7 +29,7 @@ const About = () => {
       <Helmet>
         <title>About - Blog</title>
       </Helmet>
-      <div className="w-full h-fit overflow-auto max-w-7xl mx-auto">
+      <div className="w-full h-fit overflow-auto">
         {/* Hero Section */}
         <section className="w-full px-4 py-16 md:py-24">
           <div className="max-w-3xl mx-auto text-center">
