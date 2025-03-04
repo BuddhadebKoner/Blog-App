@@ -1,5 +1,5 @@
 import { UserAuth } from "../models/user.model.js";
-import { deleteFromCloudinary, uploadOnCloudinary } from "../utils/cloudinary.js";
+import { deleteFromCloudinary } from "../utils/cloudinary.js";
 
 // get user data by id
 export const getUserById = async (req, res) => {
@@ -29,16 +29,16 @@ export const getUserById = async (req, res) => {
 // update user data by id
 export const updateUserById = async (req, res) => {
    try {
-      const { userID, name } = req.body;
-      const userImage = req.files?.userImage?.[0]?.path;
-      // console.log(req.body);
+      const { userID, name, imageUrl, imageId } = req.body;
 
+      // User validation
       if (!userID) {
          return res.status(401).json({
             message: "Unauthorized Access"
          });
       }
-      // check user is exist or not
+
+      // Check if user exists
       const isUserExists = await UserAuth.findById(userID);
       if (!isUserExists) {
          return res.status(404).json({
@@ -46,40 +46,20 @@ export const updateUserById = async (req, res) => {
          });
       }
 
-      // image update handling
-      let imageUrl = isUserExists.imageUrl;
-      let imageId = isUserExists.imageId;
+      // delete previous image from cloudinary
+      if (isUserExists.imageId) { 
+         await deleteFromCloudinary(isUserExists.imageId);
+      };
 
-      // grab image data
-      if (userImage) {
-         const newImage = await uploadOnCloudinary(userImage);
-         if (!newImage.url) {
-            return res.status(400).json({
-               success: false,
-               message: "Image upload failed."
-            });
-         }
-
-         // delete old image from cloudinary
-         if (isUserExists.imageUrl !== "" && isUserExists.imageId !== "") {
-            await deleteFromCloudinary(isUserExists.imageId);
-         }
-
-         // update with new image details
-         imageUrl = newImage.url;
-         imageId = newImage.public_id;
-      }
-
-      // update user with new data
       const updatedUser = await UserAuth.findOneAndUpdate(
          { _id: userID },
          {
             name,
-            imageUrl,
-            imageId
+            imageUrl: imageUrl || isUserExists.imageUrl,
+            imageId: imageId || isUserExists.imageId
          },
          { new: true }
-      )
+      );
 
       if (!updatedUser) {
          return res.status(400).json({

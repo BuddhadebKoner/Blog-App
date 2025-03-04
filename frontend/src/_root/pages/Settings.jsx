@@ -1,19 +1,39 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useUpdateUser } from '../../lib/react-query/queriesAndMutation';
-import { LoaderCircle, User, Mail, Calendar, CheckCircle, X, ShieldQuestion } from 'lucide-react';
+import { LoaderCircle, User, Mail, Calendar, CheckCircle, X, ShieldQuestion, Upload, RefreshCw } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { format } from 'date-fns';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
+import { Cloudinary } from '@cloudinary/url-gen';
+import { uploadImage } from '../../lib/api/user.api'; // Add this import
+
+// Get environment variables
+const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+
+// Validate required environment variables
+if (!CLOUDINARY_CLOUD_NAME) {
+  console.error('Missing VITE_CLOUDINARY_CLOUD_NAME environment variable');
+}
+
+// Initialize Cloudinary instance
+const cld = new Cloudinary({
+  cloud: {
+    cloudName: CLOUDINARY_CLOUD_NAME
+  }
+});
 
 const Settings = () => {
   const { isAuthenticated, isAuthenticatedLoading, currentUser } = useAuth();
   const [loading, setLoading] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
   const fileInputRef = useRef(null);
 
   const [name, setName] = useState('');
   const [previewImage, setPreviewImage] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
+  const [imageId, setImageId] = useState('');
   const [userData, setUserData] = useState(null);
   const [formChanged, setFormChanged] = useState(false);
   const [fileSelected, setFileSelected] = useState(false);
@@ -25,6 +45,8 @@ const Settings = () => {
     if (currentUser) {
       setName(currentUser.name || '');
       setPreviewImage(currentUser.imageUrl || '');
+      setImageUrl(currentUser.imageUrl || '');
+      setImageId(currentUser.imageId || '');
       setUserData(currentUser);
       setFormChanged(false);
       setFileSelected(false);
@@ -34,49 +56,82 @@ const Settings = () => {
   // Check if form has changed
   useEffect(() => {
     if (userData) {
-      setFormChanged(name !== userData.name || fileSelected);
+      setFormChanged(
+        name !== userData.name ||
+        (fileSelected && imageUrl !== userData.imageUrl)
+      );
     }
-  }, [name, fileSelected, userData]);
+  }, [name, fileSelected, userData, imageUrl]);
 
-  // Handle file selection
-  const handleFileChange = (e) => {
+  // Handle file selection and upload to Cloudinary
+  const handleFileChange = async (e) => {
     const file = e.target.files[0];
-    if (file) {
-      try {
-        // Check file type
-        if (!file.type.startsWith('image/')) {
-          toast.error('Please select a valid image file (JPEG, PNG, etc.)');
-          setFileSelected(false);
-          if (fileInputRef.current) fileInputRef.current.value = '';
-          return;
-        }
-
-        // Check file size (max 5MB)
-        if (file.size > 5 * 1024 * 1024) {
-          toast.error('Image file is too large (max 5MB)');
-          setFileSelected(false);
-          if (fileInputRef.current) fileInputRef.current.value = '';
-          return;
-        }
-
-        // Preview image
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setPreviewImage(reader.result);
-          setFileSelected(true);
-        };
-        reader.onerror = () => {
-          toast.error("Couldn't load image preview");
-          setFileSelected(false);
-        };
-        reader.readAsDataURL(file);
-      } catch (error) {
-        console.error('File reading error:', error);
-        toast.error("Couldn't process image file");
-        setFileSelected(false);
-      }
-    } else {
+    if (!file) {
       setFileSelected(false);
+      return;
+    }
+
+    try {
+      // Check file type
+      if (!file.type.startsWith('image/')) {
+        toast.error('Please select a valid image file (JPEG, PNG, etc.)');
+        setFileSelected(false);
+        if (fileInputRef.current) fileInputRef.current.value = '';
+        return;
+      }
+
+      // Check file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error('Image file is too large (max 5MB)');
+        setFileSelected(false);
+        if (fileInputRef.current) fileInputRef.current.value = '';
+        return;
+      }
+
+      // Preview image locally first
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewImage(reader.result);
+        setFileSelected(true);
+      };
+      reader.onerror = () => {
+        toast.error("Couldn't load image preview");
+        setFileSelected(false);
+      };
+      reader.readAsDataURL(file);
+
+      // Upload to Cloudinary
+      await uploadToCloudinary(file);
+
+    } catch (error) {
+      console.error('File processing error:', error);
+      toast.error("Couldn't process image file");
+      setFileSelected(false);
+    }
+  };
+
+  // Upload to Cloudinary function
+  const uploadToCloudinary = async (file) => {
+    setUploadingImage(true);
+    try {
+      const result = await uploadImage(file);
+      
+      if (!result.success) {
+        throw new Error(result.message || 'Failed to upload image');
+      }
+      
+      // Store the Cloudinary URL and public_id
+      setImageUrl(result.imageUrl);
+      setImageId(result.imageId);
+      
+      toast.success('Image uploaded successfully');
+    } catch (error) {
+      console.error('Cloudinary upload error:', error);
+      toast.error('Failed to upload image. Please try again.');
+      // Reset the file input
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    } finally {
+      setUploadingImage(false);
     }
   };
 
@@ -84,6 +139,8 @@ const Settings = () => {
   const handleReset = useCallback(() => {
     setName(userData?.name || '');
     setPreviewImage(userData?.imageUrl || '');
+    setImageUrl(userData?.imageUrl || '');
+    setImageId(userData?.imageId || '');
     setFileSelected(false);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
@@ -97,7 +154,6 @@ const Settings = () => {
       return format(new Date(dateString), 'MMMM dd, yyyy');
     } catch (error) {
       console.error('Date formatting error:', error);
-      toast.error('Error formatting date');
       return 'Invalid date';
     }
   }, []);
@@ -131,39 +187,22 @@ const Settings = () => {
     setLoading(true);
 
     try {
-      // Create FormData for multipart/form-data submission
-      const formData = new FormData();
-
       // Only add if user exists
       if (!userData || !userData._id) {
         toast.error('User data is missing');
         throw new Error('User data is missing');
       }
 
-      formData.append('userID', userData._id);
-      formData.append('name', name.trim());
+      // Create data object for API request (no longer FormData)
+      const updateData = {
+        userID: userData._id,
+        name: name.trim(),
+        imageUrl,
+        imageId
+      };
 
-      // Add image if selected
-      if (fileInputRef.current?.files[0]) {
-        const file = fileInputRef.current.files[0];
-
-        // Double-check file size (max 5MB)
-        if (file.size > 5 * 1024 * 1024) {
-          toast.error('Image file is too large (max 5MB)');
-          throw new Error('Image file is too large (max 5MB)');
-        }
-
-        // Double-check file type
-        if (!file.type.startsWith('image/')) {
-          toast.error('Invalid file type. Please select an image');
-          throw new Error('Invalid file type');
-        }
-
-        formData.append('userImage', file);
-      }
-
-      // Update user
-      await updateUserMutation.mutateAsync(formData);
+      // Update user with JSON data
+      await updateUserMutation.mutateAsync(updateData);
       toast.success('Profile updated successfully');
       setFormChanged(false);
       setFileSelected(false);
@@ -232,7 +271,12 @@ const Settings = () => {
             <div className="space-y-4">
               <div className="bg-[var(--color-surface-light)] border-[var(--color-border-light)] dark:bg-[var(--color-surface-dark)] dark:border-[var(--color-border-dark)] p-4 rounded-lg border">
                 <div className="flex flex-col items-center space-y-3">
-                  <div className="border-[var(--color-border-light)] dark:border-[var(--color-border-dark)] h-32 w-32 rounded-full overflow-hidden border-2">
+                  <div className="border-[var(--color-border-light)] dark:border-[var(--color-border-dark)] h-32 w-32 rounded-full overflow-hidden border-2 relative">
+                    {uploadingImage && (
+                      <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                        <RefreshCw className="animate-spin w-8 h-8 text-white" />
+                      </div>
+                    )}
                     {previewImage ? (
                       <img
                         src={previewImage}
@@ -297,15 +341,27 @@ const Settings = () => {
                   <label className="text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] block text-sm font-medium">
                     Profile Image
                   </label>
-                  <input
-                    type="file"
-                    ref={fileInputRef}
-                    onChange={handleFileChange}
-                    accept="image/*"
-                    className="text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] text-sm w-full p-2 border rounded-md"
-                  />
+                  <div className="relative">
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      onChange={handleFileChange}
+                      accept="image/*"
+                      className="text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] text-sm w-full p-2 border rounded-md"
+                      disabled={uploadingImage}
+                    />
+                    {uploadingImage && (
+                      <div className="absolute right-2 top-2">
+                        <Upload className="animate-pulse w-5 h-5" />
+                      </div>
+                    )}
+                  </div>
                   <p className="text-xs text-gray-500 dark:text-gray-400">
-                    Recommended: Square image, max 5MB
+                    {uploadingImage
+                      ? 'Uploading to Cloudinary...'
+                      : imageUrl && fileSelected
+                        ? 'Image uploaded successfully'
+                        : 'Recommended: Square image, max 5MB'}
                   </p>
                 </div>
 
@@ -384,8 +440,8 @@ const Settings = () => {
                 <div className="flex space-x-4 pt-4">
                   <button
                     type="submit"
-                    disabled={loading || updateUserMutation.isPending || !formChanged}
-                    className={`${loading || !formChanged || updateUserMutation.isPending
+                    disabled={loading || uploadingImage || updateUserMutation.isPending || !formChanged}
+                    className={`${loading || uploadingImage || !formChanged || updateUserMutation.isPending
                       ? 'bg-[var(--color-button-disabled-light)] text-[var(--color-button-disabled-text-light)] dark:bg-[var(--color-button-disabled-dark)] dark:text-[var(--color-button-disabled-text-dark)] cursor-not-allowed'
                       : 'bg-[var(--color-button-primary-light)] text-[var(--color-button-primary-text-light)] hover:bg-[var(--color-button-primary-hover-light)] dark:bg-[var(--color-button-primary-dark)] dark:text-[var(--color-button-primary-text-dark)] dark:hover:bg-[var(--color-button-primary-hover-dark)]'
                       } flex-1 py-2 px-4 rounded-md transition-colors font-medium`}
@@ -402,8 +458,8 @@ const Settings = () => {
                   <button
                     type="button"
                     onClick={handleReset}
-                    disabled={loading || updateUserMutation.isPending || !formChanged}
-                    className={`${loading || !formChanged || updateUserMutation.isPending
+                    disabled={loading || uploadingImage || updateUserMutation.isPending || !formChanged}
+                    className={`${loading || uploadingImage || !formChanged || updateUserMutation.isPending
                       ? 'bg-[var(--color-button-secondary-light)] text-[var(--color-button-disabled-text-light)] border-[var(--color-button-disabled-light)] dark:text-[var(--color-button-disabled-text-dark)] dark:border-[var(--color-button-disabled-dark)] cursor-not-allowed'
                       : 'bg-[var(--color-button-secondary-light)] text-[var(--color-button-secondary-text-light)] border-[var(--color-button-secondary-border-light)] hover:bg-[var(--color-button-secondary-hover-light)] dark:text-[var(--color-button-secondary-text-dark)] dark:border-[var(--color-button-secondary-border-dark)] dark:hover:bg-[var(--color-button-secondary-hover-dark)]'
                       } border flex-1 py-2 px-4 rounded-md transition-colors font-medium`}

@@ -137,15 +137,14 @@ export const useGetBlogById = (id) => {
 
 // update user
 export const useUpdateUser = () => {
-   const queryClient = useQueryClient();
-
-   return useMutation({
-      mutationFn: updateUser,
-      onSuccess: (data) => {
-         // Update the user data in cache
-         queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.GET_USER] });
-      },
-   });
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: updateUser,
+    onSuccess: (data) => {
+      // Update the user data in cache
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.GET_USER] });
+    },
+  });
 };
 
 // delete blog
