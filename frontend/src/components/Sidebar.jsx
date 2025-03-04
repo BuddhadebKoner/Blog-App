@@ -21,8 +21,8 @@ const Sidebar = ({ isAuthenticated, currentUser, isSidebarOpen, toggleSidebar })
 
    // Get icon based on theme
    const getThemeIcon = () => {
-      if (theme === 'system') return <Monitor />;
-      return theme === 'dark' ? <Moon /> : <Sun />;
+      if (theme === 'system') return <Monitor size={20} />;
+      return theme === 'dark' ? <Moon size={20} /> : <Sun size={20} />;
    };
 
    // Get text based on theme
@@ -43,16 +43,16 @@ const Sidebar = ({ isAuthenticated, currentUser, isSidebarOpen, toggleSidebar })
          <Link
             to={to}
             onClick={handleLinkClick}
-            className={`flex items-center px-4 py-3 rounded-lg 
+            className={`flex items-center px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg 
                      transition-all duration-300 ease-in-out
                      relative overflow-hidden
                      ${active
                   ? 'text-[var(--color-primary-light)] dark:text-[var(--color-primary-dark)] font-medium bg-[var(--color-background-light)] dark:bg-[var(--color-background-dark)]'
                   : 'text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)] hover:bg-[var(--color-background-light)] dark:hover:bg-[var(--color-background-dark)]'
-               } gap-3`}
+               } gap-2 sm:gap-3 text-sm sm:text-base`}
          >
             <div className={`transition-transform duration-300 ${active ? 'scale-110' : ''}`}>
-               {icon}
+               {React.cloneElement(icon, { size: 18 })}
             </div>
             <span className={`transition-all duration-300 ${active ? 'translate-x-1' : ''}`}>
                {text}
@@ -74,16 +74,16 @@ const Sidebar = ({ isAuthenticated, currentUser, isSidebarOpen, toggleSidebar })
             />
          )}
 
-         <aside className={`fixed md:static w-[280px] md:w-64 h-full md:h-[calc(100vh-3rem)] z-40
+         <aside className={`fixed md:static w-[260px] sm:w-[280px] md:w-64 h-full md:h-[calc(100vh-3rem)] z-40
                       bg-[var(--color-surface-light)] dark:bg-[var(--color-surface-dark)]
                       rounded-none md:rounded-r-none md:rounded-l-xl
                       shadow-lg transition-all duration-300 ease-in-out flex flex-col justify-between 
                       border-r border-[var(--color-border-light)] dark:border-[var(--color-border-dark)]
                       ${isSidebarOpen ? 'left-0' : '-left-[280px] md:left-0'}`}>
 
-            <div className='p-4 border-b flex justify-between items-center
+            <div className='p-3 sm:p-4 border-b flex justify-between items-center
                       border-[var(--color-border-light)] dark:border-[var(--color-border-dark)]'>
-               <h1 className='text-2xl font-bold 
+               <h1 className='text-xl sm:text-2xl font-bold 
                        text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)]'>
                   Explore
                </h1>
@@ -91,12 +91,12 @@ const Sidebar = ({ isAuthenticated, currentUser, isSidebarOpen, toggleSidebar })
                   className="md:hidden text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)]"
                   onClick={() => toggleSidebar(false)}
                >
-                  <X size={24} />
+                  <X size={20} />
                </button>
             </div>
 
             <nav className='flex-1 overflow-y-auto'>
-               <ul className='space-y-2 p-4'>
+               <ul className='space-y-1.5 sm:space-y-2 p-3 sm:p-4'>
                   <li>
                      {renderNavLink('/', <Home />, 'Home')}
                   </li>
@@ -123,16 +123,16 @@ const Sidebar = ({ isAuthenticated, currentUser, isSidebarOpen, toggleSidebar })
             <div className="relative border-t border-[var(--color-border-light)] dark:border-[var(--color-border-dark)]">
                <button
                   onClick={() => setShowThemeOptions(!showThemeOptions)}
-                  className="w-full cursor-pointer flex justify-between items-center gap-3 px-4 py-3 text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)] hover:bg-[var(--color-background-light)] dark:hover:bg-[var(--color-background-dark)] transition-colors duration-200"
+                  className="w-full cursor-pointer flex justify-between items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)] hover:bg-[var(--color-background-light)] dark:hover:bg-[var(--color-background-dark)] transition-colors duration-200"
                >
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2 sm:gap-3">
                      <div className={`transition-transform duration-300 ${showThemeOptions ? 'rotate-12' : ''}`}>
                         {getThemeIcon()}
                      </div>
                      {getThemeText()}
                   </div>
                   <svg
-                     className={`w-4 h-4 transition-transform duration-300 ${showThemeOptions ? 'rotate-180' : ''}`}
+                     className={`w-3 h-3 sm:w-4 sm:h-4 transition-transform duration-300 ${showThemeOptions ? 'rotate-180' : ''}`}
                      fill="none"
                      stroke="currentColor"
                      viewBox="0 0 24 24"
@@ -151,10 +151,10 @@ const Sidebar = ({ isAuthenticated, currentUser, isSidebarOpen, toggleSidebar })
                                  toggleTheme('light');
                                  setShowThemeOptions(false);
                               }}
-                              className={`w-full flex items-center px-4 py-2 hover:bg-[var(--color-background-light)] dark:hover:bg-[var(--color-background-dark)] 
+                              className={`w-full flex items-center px-3 sm:px-4 py-2 text-sm sm:text-base hover:bg-[var(--color-background-light)] dark:hover:bg-[var(--color-background-dark)] 
                                  ${theme === 'light' ? 'text-[var(--color-primary-light)] bg-[var(--color-background-light)]' : 'text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)]'} transition-colors duration-200`}
                            >
-                              <Sun className={`mr-2 transition-transform duration-300 ${theme === 'light' ? 'scale-110' : ''}`} size={18} />
+                              <Sun className={`mr-2 transition-transform duration-300 ${theme === 'light' ? 'scale-110' : ''}`} size={16} />
                               Light
                            </button>
                         </li>
@@ -164,10 +164,10 @@ const Sidebar = ({ isAuthenticated, currentUser, isSidebarOpen, toggleSidebar })
                                  toggleTheme('dark');
                                  setShowThemeOptions(false);
                               }}
-                              className={`w-full flex items-center px-4 py-2 hover:bg-[var(--color-background-light)] dark:hover:bg-[var(--color-background-dark)] 
+                              className={`w-full flex items-center px-3 sm:px-4 py-2 text-sm sm:text-base hover:bg-[var(--color-background-light)] dark:hover:bg-[var(--color-background-dark)] 
                                  ${theme === 'dark' ? 'text-[var(--color-primary-dark)] bg-[var(--color-background-dark)]' : 'text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)]'} transition-colors duration-200`}
                            >
-                              <Moon className={`mr-2 transition-transform duration-300 ${theme === 'dark' ? 'scale-110' : ''}`} size={18} />
+                              <Moon className={`mr-2 transition-transform duration-300 ${theme === 'dark' ? 'scale-110' : ''}`} size={16} />
                               Dark
                            </button>
                         </li>
@@ -177,10 +177,10 @@ const Sidebar = ({ isAuthenticated, currentUser, isSidebarOpen, toggleSidebar })
                                  toggleTheme('system');
                                  setShowThemeOptions(false);
                               }}
-                              className={`w-full flex items-center px-4 py-2 hover:bg-[var(--color-background-light)] dark:hover:bg-[var(--color-background-dark)] 
+                              className={`w-full flex items-center px-3 sm:px-4 py-2 text-sm sm:text-base hover:bg-[var(--color-background-light)] dark:hover:bg-[var(--color-background-dark)] 
                                  ${theme === 'system' ? 'text-[var(--color-primary-light)] dark:text-[var(--color-primary-dark)] bg-[var(--color-background-light)] dark:bg-[var(--color-background-dark)]' : 'text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)]'} transition-colors duration-200`}
                            >
-                              <Monitor className={`mr-2 transition-transform duration-300 ${theme === 'system' ? 'scale-110' : ''}`} size={18} />
+                              <Monitor className={`mr-2 transition-transform duration-300 ${theme === 'system' ? 'scale-110' : ''}`} size={16} />
                               System
                            </button>
                         </li>
@@ -189,7 +189,7 @@ const Sidebar = ({ isAuthenticated, currentUser, isSidebarOpen, toggleSidebar })
                )}
             </div>
 
-            <div className='p-4 border-t border-[var(--color-border-light)] dark:border-[var(--color-border-dark)]'>
+            <div className='p-3 sm:p-4 border-t border-[var(--color-border-light)] dark:border-[var(--color-border-dark)]'>
                {isAuthenticated ? (
                   <div
                      className='flex items-center justify-between  
@@ -197,7 +197,7 @@ const Sidebar = ({ isAuthenticated, currentUser, isSidebarOpen, toggleSidebar })
                           dark:text-[var(--color-text-primary-dark)]'
                   >
                      <Link
-                        className={`w-fit h-full px-4 py-3 transition-all duration-300 rounded-lg dark:hover:bg-[var(--color-background-dark)] hover:bg-[var(--color-background-light)]
+                        className={`w-fit h-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base transition-all duration-300 rounded-lg dark:hover:bg-[var(--color-background-dark)] hover:bg-[var(--color-background-light)]
                            ${isActive(`/profile/${currentUser?._id}`) ? 'text-[var(--color-primary-light)] dark:text-[var(--color-primary-dark)] font-medium bg-[var(--color-background-light)] dark:bg-[var(--color-background-dark)]' : ''}`}
                         to={`/profile/${currentUser?._id}`}
                         onClick={handleLinkClick}
@@ -207,7 +207,7 @@ const Sidebar = ({ isAuthenticated, currentUser, isSidebarOpen, toggleSidebar })
                         </span>
                      </Link>
                      <button
-                        className='cursor-pointer hover:text-[var(--color-primary-light)] dark:hover:text-[var(--color-primary-dark)] transition-colors duration-200 p-2 rounded-full hover:bg-[var(--color-background-light)] dark:hover:bg-[var(--color-background-dark)]'
+                        className='cursor-pointer hover:text-[var(--color-primary-light)] dark:hover:text-[var(--color-primary-dark)] transition-colors duration-200 p-1.5 sm:p-2 rounded-full hover:bg-[var(--color-background-light)] dark:hover:bg-[var(--color-background-dark)]'
                         onClick={() => {
                            LogOut();
                            if (window.innerWidth < 768) {
@@ -215,7 +215,7 @@ const Sidebar = ({ isAuthenticated, currentUser, isSidebarOpen, toggleSidebar })
                            }
                         }}
                      >
-                        <LogOutIcon className="transition-transform duration-300 hover:scale-110" />
+                        <LogOutIcon size={18} className="transition-transform duration-300 hover:scale-110" />
                      </button>
                   </div>
                ) : (
@@ -228,6 +228,5 @@ const Sidebar = ({ isAuthenticated, currentUser, isSidebarOpen, toggleSidebar })
       </>
    );
 };
-
 
 export default Sidebar;

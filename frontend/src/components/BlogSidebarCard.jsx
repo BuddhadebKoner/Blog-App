@@ -51,28 +51,31 @@ export default function BlogSidebarCard({ author, blogUrl, blogTitle }) {
          <h3 className="text-xl font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)] mb-4">
             Author
          </h3>
-         <Link
+         <div
             className="flex items-center space-x-3 group hover:opacity-90 transition-opacity duration-200"
-            to={`/profile/${author?._id}`}
          >
             {author?.imageUrl ? (
-               <img
-                  src={author.imageUrl || '/default-avatar.png'}
-                  alt={author.name}
-                  width={40}
-                  height={40}
-                  className="rounded-full border border-[var(--color-border-light)] dark:border-[var(--color-border-dark)] transition-transform duration-200 group-hover:scale-105"
-               />
+               <>
+                  <Link
+                     className="flex items-center gap-2"
+                     to={`/profile/${author?._id}`}
+                  >
+                     <img
+                        src={author.imageUrl || '/default-avatar.png'}
+                        alt={author.name}
+                        width={40}
+                        height={40}
+                        className="rounded-full border border-[var(--color-border-light)] dark:border-[var(--color-border-dark)] transition-transform duration-200 group-hover:scale-105"
+                     />
+                     <span className="text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] flex justify-start items-center gap-2 group-hover:text-[var(--color-primary-light)] dark:group-hover:text-[var(--color-primary-dark)] transition-colors duration-200">
+                        {author?.name}
+                     </span>
+                  </Link>
+               </>
             ) : (
                <CircleUser className="w-10 h-10 transition-transform duration-200 group-hover:scale-105" />
             )}
-            <span className="text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] flex justify-start items-center gap-2 group-hover:text-[var(--color-primary-light)] dark:group-hover:text-[var(--color-primary-dark)] transition-colors duration-200">
-               {author?.name}
-               {author?.verified && (
-                  <ShieldCheck className="w-4 h-4 text-blue-500" title="Verified Author" />
-               )}
-            </span>
-         </Link>
+         </div>
          <div className="mt-6">
             <h4 className="mt-4 text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)]">
                Share With

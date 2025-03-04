@@ -16,7 +16,7 @@ const CreateBlogForm = ({
     setSlugParam,
     content,
     setContent,
-    imageUrl,        // added prop for reading the image URL
+    imageUrl,
     setImageUrl,
     currentUser,
     setLoading,
@@ -161,9 +161,9 @@ const CreateBlogForm = ({
                 videoLink,
                 readTime,
                 slugParam,
-                content: JSON.stringify(sanitizedContent), // Send as a JSON string
-                imageUrl, // Use the Cloudinary URL from props
-                imageId, // Use the Cloudinary public_id
+                content: JSON.stringify(sanitizedContent),
+                imageUrl,
+                imageId,
             };
 
             // console.log('Final Blog Data:', blogData);
@@ -191,25 +191,25 @@ const CreateBlogForm = ({
     };
 
     return (
-        <div className="px-4 py-[2.5vh] w-full lg:w-1/2 overflow-y-auto h-full">
-            <div className="w-full flex items-center justify-start mb-6 gap-3">
+        <div className="px-3 sm:px-4 py-[2vh] sm:py-[2.5vh] w-full max-w-3xl mx-auto lg:w-3/4 xl:w-1/2 overflow-y-auto h-full">
+            <div className="w-full flex items-center justify-start mb-4 sm:mb-6 gap-2 sm:gap-3">
                 <ArrowLeft
                     onClick={() => navigate(-1)}
-                    className="w-6 h-6 inline-block mr-2 cursor-pointer"
+                    className="w-5 h-5 sm:w-6 sm:h-6 inline-block cursor-pointer"
                 />
-                <h1 className="text-2xl font-semibold text-gray-900 dark:text-white text-center">
+                <h1 className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-white">
                     Create New Blog
                 </h1>
             </div>
-            <form onSubmit={handleSubmit} className="space-y-4 overflow-auto">
+            <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4 overflow-auto">
                 {serverError && (
-                    <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                    <div className="bg-red-100 border border-red-400 text-red-700 px-3 py-2 sm:px-4 sm:py-3 rounded text-sm">
                         {serverError}
                     </div>
                 )}
                 {/* Title */}
-                <div className="px-1">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <div className="px-0 sm:px-1">
+                    <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                         Title *
                     </label>
                     <input
@@ -218,13 +218,13 @@ const CreateBlogForm = ({
                         onChange={(e) => setTitle(e.target.value)}
                         disabled={loading}
                         className={`w-full rounded-md border ${errors.title ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
-                            } p-2 bg-white dark:bg-gray-800`}
+                            } p-2 text-sm bg-white dark:bg-gray-800`}
                     />
-                    {errors.title && <p className="text-red-500 text-sm mt-1">{errors.title}</p>}
+                    {errors.title && <p className="text-red-500 text-xs sm:text-sm mt-1">{errors.title}</p>}
                 </div>
                 {/* Blog Image */}
-                <div className="px-1">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <div className="px-0 sm:px-1">
+                    <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                         Blog Image
                     </label>
                     <input
@@ -233,15 +233,15 @@ const CreateBlogForm = ({
                         onChange={handleBlogImageChange}
                         disabled={loading || uploadingImage}
                         accept="image/*"
-                        className="w-full rounded-md border border-gray-300 dark:border-gray-600 p-2 bg-white dark:bg-gray-800"
+                        className="w-full rounded-md border border-gray-300 dark:border-gray-600 p-1.5 sm:p-2 text-xs sm:text-sm bg-white dark:bg-gray-800"
                     />
                     {uploadingImage && (
-                        <p className="text-blue-500 text-sm mt-1">Uploading image...</p>
+                        <p className="text-blue-500 text-xs sm:text-sm mt-1">Uploading image...</p>
                     )}
                 </div>
                 {/* Video Link */}
-                <div className="px-1">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <div className="px-0 sm:px-1">
+                    <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                         Video Link
                     </label>
                     <input
@@ -249,12 +249,12 @@ const CreateBlogForm = ({
                         value={videoLink}
                         onChange={(e) => setVideoLink(e.target.value)}
                         disabled={loading}
-                        className="w-full rounded-md border border-gray-300 dark:border-gray-600 p-2 bg-white dark:bg-gray-800"
+                        className="w-full rounded-md border border-gray-300 dark:border-gray-600 p-2 text-sm bg-white dark:bg-gray-800"
                     />
                 </div>
                 {/* Read Time */}
-                <div className="px-1">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <div className="px-0 sm:px-1">
+                    <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                         Read Time
                     </label>
                     <input
@@ -263,12 +263,12 @@ const CreateBlogForm = ({
                         onChange={(e) => setReadTime(e.target.value)}
                         disabled={loading}
                         placeholder="e.g., 5 min read"
-                        className="w-full rounded-md border border-gray-300 dark:border-gray-600 p-2 bg-white dark:bg-gray-800"
+                        className="w-full rounded-md border border-gray-300 dark:border-gray-600 p-2 text-sm bg-white dark:bg-gray-800"
                     />
                 </div>
                 {/* Slug Param */}
-                <div className="px-1">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <div className="px-0 sm:px-1">
+                    <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                         Slug Param *
                     </label>
                     <input
@@ -277,21 +277,21 @@ const CreateBlogForm = ({
                         onChange={(e) => setSlugParam(e.target.value)}
                         disabled={loading}
                         className={`w-full rounded-md border ${errors.slugParam ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
-                            } p-2 bg-white dark:bg-gray-800`}
+                            } p-2 text-sm bg-white dark:bg-gray-800`}
                     />
                     {errors.slugParam && (
-                        <p className="text-red-500 text-sm mt-1">{errors.slugParam}</p>
+                        <p className="text-red-500 text-xs sm:text-sm mt-1">{errors.slugParam}</p>
                     )}
                 </div>
                 {/* Content Blocks */}
-                <div className="space-y-4">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <div className="space-y-3 sm:space-y-4">
+                    <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 sm:mb-2">
                         Content Blocks *
                     </label>
                     {content.map((block, index) => (
                         <div
                             key={block.tempId}
-                            className="mb-4 p-4 border rounded-md dark:border-gray-600"
+                            className="mb-3 sm:mb-4 p-3 sm:p-4 border rounded-md dark:border-gray-600"
                         >
                             <div className="mb-2">
                                 <select
@@ -299,9 +299,9 @@ const CreateBlogForm = ({
                                     onChange={(e) => handleContentTypeChange(index, e.target.value)}
                                     disabled={loading}
                                     className={`w-full rounded-md border ${errors[`contentType-${index}`]
-                                            ? 'border-red-500'
-                                            : 'border-gray-300 dark:border-gray-600'
-                                        } p-2 bg-white dark:bg-gray-800`}
+                                        ? 'border-red-500'
+                                        : 'border-gray-300 dark:border-gray-600'
+                                        } p-1.5 sm:p-2 text-sm bg-white dark:bg-gray-800`}
                                 >
                                     <option value="">Select Content Type</option>
                                     <option value="heading">Heading</option>
@@ -311,7 +311,7 @@ const CreateBlogForm = ({
                                     <option value="highlight">Highlight</option>
                                 </select>
                                 {errors[`contentType-${index}`] && (
-                                    <p className="text-red-500 text-sm mt-1">
+                                    <p className="text-red-500 text-xs sm:text-sm mt-1">
                                         {errors[`contentType-${index}`]}
                                     </p>
                                 )}
@@ -321,15 +321,15 @@ const CreateBlogForm = ({
                                     value={block.value}
                                     onChange={(e) => handleContentValueChange(index, e.target.value)}
                                     disabled={loading}
-                                    rows={4}
+                                    rows={3}
                                     placeholder="Enter content..."
                                     className={`w-full rounded-md border ${errors[`contentValue-${index}`]
-                                            ? 'border-red-500'
-                                            : 'border-gray-300 dark:border-gray-600'
-                                        } p-2 bg-white dark:bg-gray-800`}
+                                        ? 'border-red-500'
+                                        : 'border-gray-300 dark:border-gray-600'
+                                        } p-1.5 sm:p-2 text-sm bg-white dark:bg-gray-800`}
                                 />
                                 {errors[`contentValue-${index}`] && (
-                                    <p className="text-red-500 text-sm mt-1">
+                                    <p className="text-red-500 text-xs sm:text-sm mt-1">
                                         {errors[`contentValue-${index}`]}
                                     </p>
                                 )}
@@ -338,7 +338,7 @@ const CreateBlogForm = ({
                                 type="button"
                                 onClick={() => removeContentBlock(index)}
                                 disabled={loading}
-                                className="text-red-500 text-sm hover:text-red-700"
+                                className="text-red-500 text-xs sm:text-sm hover:text-red-700"
                             >
                                 Remove Block
                             </button>
@@ -348,19 +348,19 @@ const CreateBlogForm = ({
                         type="button"
                         onClick={addContentBlock}
                         disabled={loading}
-                        className="w-full py-2 mt-2 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-500 border border-dashed border-gray-300 dark:border-gray-600 rounded-md"
+                        className="w-full py-1.5 sm:py-2 mt-2 text-xs sm:text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-500 border border-dashed border-gray-300 dark:border-gray-600 rounded-md"
                     >
                         + Add Content Block
                     </button>
                 </div>
                 {/* Form Actions */}
-                <div className="flex justify-end space-x-4 mt-6">
+                <div className="flex justify-end space-x-3 sm:space-x-4 mt-4 sm:mt-6">
                     <button
                         type="submit"
                         disabled={loading || uploadingImage}
-                        className={`px-4 py-2 bg-green-500 dark:bg-green-400 text-white rounded-lg transition duration-300 ${loading || uploadingImage
-                                ? 'opacity-50 cursor-not-allowed'
-                                : 'hover:bg-green-600 dark:hover:bg-green-500 cursor-pointer'
+                        className={`px-3 sm:px-4 py-1.5 sm:py-2 bg-green-500 dark:bg-green-400 text-white rounded-lg transition duration-300 text-sm ${loading || uploadingImage
+                            ? 'opacity-50 cursor-not-allowed'
+                            : 'hover:bg-green-600 dark:hover:bg-green-500 cursor-pointer'
                             }`}
                     >
                         {loading ? 'Saving...' : 'Save Blog'}

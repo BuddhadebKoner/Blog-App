@@ -263,21 +263,21 @@ const Settings = () => {
         <title>Profile Settings - Blog</title>
       </Helmet>
 
-      <div className="w-full h-fit overflow-auto bg-transparent text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)] max-w-3xl mx-auto p-6">
-        <h1 className="text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)] text-2xl font-bold mb-6">
+      <div className="w-full h-fit overflow-auto bg-transparent text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)] max-w-3xl mx-auto p-3 sm:p-4 md:p-6">
+        <h1 className="text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)] text-xl sm:text-2xl font-bold mb-4 md:mb-6">
           Profile Settings
         </h1>
 
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-3 gap-4 md:gap-6">
           {/* Left column - Profile Image */}
           <div className="md:col-span-1">
-            <div className="space-y-4">
-              <div className="bg-[var(--color-surface-light)] border-[var(--color-border-light)] dark:bg-[var(--color-surface-dark)] dark:border-[var(--color-border-dark)] p-4 rounded-lg border">
-                <div className="flex flex-col items-center space-y-3">
-                  <div className="border-[var(--color-border-light)] dark:border-[var(--color-border-dark)] h-32 w-32 rounded-full overflow-hidden border-2 relative">
+            <div className="space-y-3 sm:space-y-4">
+              <div className="bg-[var(--color-surface-light)] border-[var(--color-border-light)] dark:bg-[var(--color-surface-dark)] dark:border-[var(--color-border-dark)] p-3 sm:p-4 rounded-lg border">
+                <div className="flex flex-col items-center space-y-2 sm:space-y-3">
+                  <div className="border-[var(--color-border-light)] dark:border-[var(--color-border-dark)] h-24 w-24 sm:h-28 sm:w-28 md:h-32 md:w-32 rounded-full overflow-hidden border-2 relative">
                     {uploadingImage && (
                       <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                        <RefreshCw className="animate-spin w-8 h-8 text-white" />
+                        <RefreshCw className="animate-spin w-6 h-6 sm:w-8 sm:h-8 text-white" />
                       </div>
                     )}
                     {previewImage ? (
@@ -307,21 +307,21 @@ const Settings = () => {
                       </div>
                     )}
                   </div>
-                  <h2 className="text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)] text-xl font-semibold">
+                  <h2 className="text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)] text-lg sm:text-xl font-semibold">
                     {userData?.name || 'User'}
                   </h2>
-                  <div className="text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] text-sm">
+                  <div className="text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] text-xs sm:text-sm text-center">
                     Member since {formatDate(userData?.createdAt)}
                   </div>
-                  <div className="flex items-center">
+                  <div className="flex items-center text-xs sm:text-sm">
                     {userData?.isVarified ? (
                       <div className="flex items-center text-green-500">
-                        <CheckCircle size={16} className="mr-1" />
+                        <CheckCircle size={14} className="mr-1" />
                         <span>Verified Account</span>
                       </div>
                     ) : (
                       <div className="flex items-center text-red-500">
-                        <X size={16} className="mr-1" />
+                        <X size={14} className="mr-1" />
                         <span>Not Verified</span>
                       </div>
                     )}
@@ -333,15 +333,15 @@ const Settings = () => {
 
           {/* Right column - Form */}
           <div className="md:col-span-2">
-            <div className="bg-[var(--color-surface-light)] border-[var(--color-border-light)] dark:bg-[var(--color-surface-dark)] dark:border-[var(--color-border-dark)] p-6 rounded-lg border">
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <h2 className="text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)] text-xl font-semibold mb-4">
+            <div className="bg-[var(--color-surface-light)] border-[var(--color-border-light)] dark:bg-[var(--color-surface-dark)] dark:border-[var(--color-border-dark)] p-4 sm:p-5 md:p-6 rounded-lg border">
+              <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5 md:space-y-6">
+                <h2 className="text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)] text-lg sm:text-xl font-semibold mb-3 sm:mb-4">
                   Edit Profile
                 </h2>
 
                 {/* Profile Image Upload */}
-                <div className="space-y-2">
-                  <label className="text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] block text-sm font-medium">
+                <div className="space-y-1 sm:space-y-2">
+                  <label className="text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] block text-xs sm:text-sm font-medium">
                     Profile Image
                   </label>
                   <div className="relative">
@@ -350,16 +350,16 @@ const Settings = () => {
                       ref={fileInputRef}
                       onChange={handleFileChange}
                       accept="image/*"
-                      className="text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] text-sm w-full p-2 border rounded-md"
+                      className="text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] text-xs sm:text-sm w-full p-1.5 sm:p-2 border rounded-md"
                       disabled={uploadingImage}
                     />
                     {uploadingImage && (
                       <div className="absolute right-2 top-2">
-                        <Upload className="animate-pulse w-5 h-5" />
+                        <Upload className="animate-pulse w-4 h-4 sm:w-5 sm:h-5" />
                       </div>
                     )}
                   </div>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                  <p className="text-[10px] xs:text-xs text-gray-500 dark:text-gray-400">
                     {uploadingImage
                       ? 'Uploading to Cloudinary...'
                       : imageUrl && fileSelected
@@ -369,10 +369,10 @@ const Settings = () => {
                 </div>
 
                 {/* Name */}
-                <div className="space-y-2">
+                <div className="space-y-1 sm:space-y-2">
                   <label
                     htmlFor="name"
-                    className="text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] block text-sm font-medium"
+                    className="text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] block text-xs sm:text-sm font-medium"
                   >
                     Name
                   </label>
@@ -381,7 +381,7 @@ const Settings = () => {
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="text-[var(--color-text-primary-light)] bg-[var(--color-background-light)] border-[var(--color-border-light)] dark:text-[var(--color-text-primary-dark)] dark:bg-[var(--color-background-dark)] dark:border-[var(--color-border-dark)] w-full px-3 py-2 border rounded-md"
+                    className="text-[var(--color-text-primary-light)] bg-[var(--color-background-light)] border-[var(--color-border-light)] dark:text-[var(--color-text-primary-dark)] dark:bg-[var(--color-background-dark)] dark:border-[var(--color-border-dark)] w-full px-3 py-1.5 sm:py-2 text-xs sm:text-sm border rounded-md"
                     required
                     minLength={2}
                     maxLength={50}
@@ -389,69 +389,69 @@ const Settings = () => {
                 </div>
 
                 {/* Email (non-editable) */}
-                <div className="space-y-2">
+                <div className="space-y-1 sm:space-y-2">
                   <label
                     htmlFor="email"
-                    className="text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] flex items-center text-sm font-medium"
+                    className="text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] flex items-center text-xs sm:text-sm font-medium"
                   >
-                    <Mail size={16} className="mr-1" /> Email
+                    <Mail size={14} className="mr-1" /> Email
                   </label>
                   <input
                     id="email"
                     type="email"
                     value={userData?.email || ''}
-                    className="text-[var(--color-text-secondary-light)] bg-[var(--color-surface-light)] border-[var(--color-border-light)] dark:text-[var(--color-text-secondary-dark)] dark:bg-[var(--color-surface-dark)] dark:border-[var(--color-border-dark)] w-full px-3 py-2 border rounded-md cursor-not-allowed"
+                    className="text-[var(--color-text-secondary-light)] bg-[var(--color-surface-light)] border-[var(--color-border-light)] dark:text-[var(--color-text-secondary-dark)] dark:bg-[var(--color-surface-dark)] dark:border-[var(--color-border-dark)] w-full px-3 py-1.5 sm:py-2 text-xs sm:text-sm border rounded-md cursor-not-allowed"
                     disabled
                   />
                 </div>
 
                 {/* User ID (non-editable) */}
-                <div className="space-y-2">
+                <div className="space-y-1 sm:space-y-2">
                   <label
                     htmlFor="userId"
-                    className="text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] flex items-center text-sm font-medium"
+                    className="text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] flex items-center text-xs sm:text-sm font-medium"
                   >
-                    <User size={16} className="mr-1" /> User ID
+                    <User size={14} className="mr-1" /> User ID
                   </label>
                   <input
                     id="userId"
                     type="text"
                     value={userData?._id || ''}
-                    className="text-[var(--color-text-secondary-light)] bg-[var(--color-surface-light)] border-[var(--color-border-light)] dark:text-[var(--color-text-secondary-dark)] dark:bg-[var(--color-surface-dark)] dark:border-[var(--color-border-dark)] w-full px-3 py-2 border rounded-md cursor-not-allowed"
+                    className="text-[var(--color-text-secondary-light)] bg-[var(--color-surface-light)] border-[var(--color-border-light)] dark:text-[var(--color-text-secondary-dark)] dark:bg-[var(--color-surface-dark)] dark:border-[var(--color-border-dark)] w-full px-3 py-1.5 sm:py-2 text-xs sm:text-sm border rounded-md cursor-not-allowed truncate"
                     disabled
                   />
                 </div>
 
                 {/* Last Updated (non-editable) */}
-                <div className="space-y-2">
+                <div className="space-y-1 sm:space-y-2">
                   <label
                     htmlFor="lastUpdated"
-                    className="text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] flex items-center text-sm font-medium"
+                    className="text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] flex items-center text-xs sm:text-sm font-medium"
                   >
-                    <Calendar size={16} className="mr-1" /> Last Updated
+                    <Calendar size={14} className="mr-1" /> Last Updated
                   </label>
                   <input
                     id="lastUpdated"
                     type="text"
                     value={formatDate(userData?.updatedAt)}
-                    className="text-[var(--color-text-secondary-light)] bg-[var(--color-surface-light)] border-[var(--color-border-light)] dark:text-[var(--color-text-secondary-dark)] dark:bg-[var(--color-surface-dark)] dark:border-[var(--color-border-dark)] w-full px-3 py-2 border rounded-md cursor-not-allowed"
+                    className="text-[var(--color-text-secondary-light)] bg-[var(--color-surface-light)] border-[var(--color-border-light)] dark:text-[var(--color-text-secondary-dark)] dark:bg-[var(--color-surface-dark)] dark:border-[var(--color-border-dark)] w-full px-3 py-1.5 sm:py-2 text-xs sm:text-sm border rounded-md cursor-not-allowed"
                     disabled
                   />
                 </div>
 
                 {/* Buttons */}
-                <div className="flex space-x-4 pt-4">
+                <div className="flex space-x-3 sm:space-x-4 pt-2 sm:pt-4">
                   <button
                     type="submit"
                     disabled={loading || uploadingImage || updateUserMutation.isPending || !formChanged}
                     className={`${loading || uploadingImage || !formChanged || updateUserMutation.isPending
                       ? 'bg-[var(--color-button-disabled-light)] text-[var(--color-button-disabled-text-light)] dark:bg-[var(--color-button-disabled-dark)] dark:text-[var(--color-button-disabled-text-dark)] cursor-not-allowed'
                       : 'bg-[var(--color-button-primary-light)] text-[var(--color-button-primary-text-light)] hover:bg-[var(--color-button-primary-hover-light)] dark:bg-[var(--color-button-primary-dark)] dark:text-[var(--color-button-primary-text-dark)] dark:hover:bg-[var(--color-button-primary-hover-dark)]'
-                      } flex-1 py-2 px-4 rounded-md transition-colors font-medium`}
+                      } flex-1 py-1.5 sm:py-2 px-3 sm:px-4 rounded-md transition-colors font-medium text-xs sm:text-sm`}
                   >
                     {loading || updateUserMutation.isPending ? (
                       <span className="flex items-center justify-center">
-                        <LoaderCircle className="animate-spin w-4 h-4 mr-2" />
+                        <LoaderCircle className="animate-spin w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                         Updating...
                       </span>
                     ) : (
@@ -465,7 +465,7 @@ const Settings = () => {
                     className={`${loading || uploadingImage || !formChanged || updateUserMutation.isPending
                       ? 'bg-[var(--color-button-secondary-light)] text-[var(--color-button-disabled-text-light)] border-[var(--color-button-disabled-light)] dark:text-[var(--color-button-disabled-text-dark)] dark:border-[var(--color-button-disabled-dark)] cursor-not-allowed'
                       : 'bg-[var(--color-button-secondary-light)] text-[var(--color-button-secondary-text-light)] border-[var(--color-button-secondary-border-light)] hover:bg-[var(--color-button-secondary-hover-light)] dark:text-[var(--color-button-secondary-text-dark)] dark:border-[var(--color-button-secondary-border-dark)] dark:hover:bg-[var(--color-button-secondary-hover-dark)]'
-                      } border flex-1 py-2 px-4 rounded-md transition-colors font-medium`}
+                      } border flex-1 py-1.5 sm:py-2 px-3 sm:px-4 rounded-md transition-colors font-medium text-xs sm:text-sm`}
                   >
                     Reset
                   </button>

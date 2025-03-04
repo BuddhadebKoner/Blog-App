@@ -23,21 +23,25 @@ const CreateBlog = () => {
     currentUser,
   } = useAuth();
 
-  if (isAuthenticatedError) return <div>Error: {isAuthenticatedError.message}</div>;
+  if (isAuthenticatedError) return (
+    <div className="p-4 text-sm sm:text-base">
+      Error: {isAuthenticatedError.message}
+    </div>
+  );
 
   if (loading || isAuthenticatedLoading) {
     return (
-      <div className="flex justify-center items-center md:min-h-screen md:rounded-lg shadow-lg p-4 space-y-4 md:space-y-0 md:p-6 dark:border-[var(--color-border-dark)]">
-        <LoaderCircle className="animate-spin w-10 h-10" />
+      <div className="flex justify-center items-center min-h-[50vh] md:min-h-screen w-full rounded-lg shadow-lg p-3 sm:p-4 md:p-6 dark:border-[var(--color-border-dark)]">
+        <LoaderCircle className="animate-spin w-8 h-8 sm:w-10 sm:h-10" />
       </div>
     );
   }
 
   if (!isAuthenticated || currentUser === null) {
     return (
-      <div className="flex gap-5 justify-center items-center md:min-h-screen md:rounded-lg shadow-lg p-4 space-y-4 md:space-y-0 md:p-6 dark:border-[var(--color-border-dark)]">
-        <ShieldQuestion className="w-10 h-10" />
-        <p>
+      <div className="flex flex-col sm:flex-row gap-3 sm:gap-5 justify-center items-center min-h-[50vh] md:min-h-screen w-full rounded-lg shadow-lg p-3 sm:p-4 md:p-6 dark:border-[var(--color-border-dark)]">
+        <ShieldQuestion className="w-8 h-8 sm:w-10 sm:h-10" />
+        <p className="text-sm sm:text-base text-center sm:text-left">
           Please{" "}
           <Link to={'/sign-in'} className="text-blue-500 hover:underline">
             Sign In
@@ -58,8 +62,8 @@ const CreateBlog = () => {
         <title>Create Blog - Blog</title>
       </Helmet>
 
-      <div className="flex-1 min-h-0 w-full h-screen flex overflow-hidden">
-        <div className="flex flex-1 min-h-0 overflow-hidden">
+      <div className="flex-1 w-full h-[100dvh] flex overflow-hidden">
+        <div className="flex flex-1 flex-col lg:flex-row w-full overflow-auto lg:overflow-hidden">
           <CreateBlogForm
             title={title}
             setTitle={setTitle}
@@ -71,8 +75,8 @@ const CreateBlog = () => {
             setSlugParam={setSlugParam}
             content={content}
             setContent={setContent}
-            imageUrl={imageUrl}         
-            setImageUrl={setImageUrl}   
+            imageUrl={imageUrl}
+            setImageUrl={setImageUrl}
             currentUser={currentUser}
             setLoading={setLoading}
             loading={loading}

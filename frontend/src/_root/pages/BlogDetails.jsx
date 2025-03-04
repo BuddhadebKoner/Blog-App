@@ -38,17 +38,18 @@ const BlogDetails = () => {
 
   if (isDeleting) {
     return (
-      <div className='flex justify-center items-center md:min-h-screen md:rounded-lg shadow-lg p-4 space-y-4 md:space-y-0 md:p-6 dark:border-[var(--color-border-dark)]'>
-        <LoaderCircle className='animate-spin w-10 h-10' />
+      <div className="flex justify-center items-center min-h-screen rounded-lg shadow-lg p-4 space-y-4">
+        <LoaderCircle className="animate-spin w-10 h-10" />
       </div>
-    )
+    );
   }
 
   const handleDeleteBlog = () => {
     if (window.confirm('Are you sure you want to delete this blog?')) {
       deleteBlog(slugParam);
       navigate(-1);
-      toast.sucess('Blog deleted successfully');
+      // Ensure toast function is imported/defined accordingly
+      toast.success('Blog deleted successfully');
     }
   };
 
@@ -57,10 +58,10 @@ const BlogDetails = () => {
       <Helmet>
         <title>{blog.title} | Blog</title>
       </Helmet>
-      <div className="w-full h-fit overflow-auto bg-transparent  text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)] lg:py-5 py-20 px-6 md:px-20 transition-colors duration-300">
+      <div className="w-full h-fit overflow-auto bg-transparent text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)] lg:pb-10 md:py-10 px-1 sm:px-6 transition-colors duration-300">
         <section className="max-w-4xl mx-auto">
-          <div className="flex justify-between items-center mb-3">
-            <p className="text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] text-base py-5">
+          <div className="flex justify-between items-center sm:items-center mb-3">
+            <p className="text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] text-xs sm:text-base py-5">
               <Link
                 to="/blogs"
                 className="underline text-[var(--color-accent-light)] dark:text-[var(--color-accent-dark)]"
@@ -71,35 +72,32 @@ const BlogDetails = () => {
             </p>
             {currentUser?._id === blog.author._id && (
               <button
-                className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors cursor-pointer"
+                className="mt-2 sm:mt-0 p-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors cursor-pointer"
                 onClick={handleDeleteBlog}
               >
-                <Trash className="w-6 h-6" />
+                <Trash />
               </button>
             )}
           </div>
 
-          <div className="relative w-full h-64 md:h-80 rounded-lg overflow-hidden shadow-lg">
+          <div className="relative w-full h-64 sm:h-72 md:h-80 rounded-lg overflow-hidden shadow-lg">
             <img
               src={blog.imageUrl}
               alt={blog.title}
               className="w-full h-full object-cover brightness-90 dark:brightness-75"
             />
             <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-              {/* Keeping overlay text white for readability */}
-              <h1 className="text-white text-3xl md:text-5xl font-bold text-center px-4">
+              <h1 className="text-white text-2xl sm:text-3xl md:text-5xl font-bold text-center px-4">
                 {blog.title}
               </h1>
             </div>
           </div>
         </section>
 
-        <div className="max-w-4xl mx-auto mt-10 flex flex-col md:flex-row gap-10">
+        <div className="max-w-4xl mx-auto lg:mt-10 mt-5 flex flex-col md:flex-row gap-6 md:gap-10">
           <div className="w-full md:w-3/4">
             <div className="flex items-center gap-4 mb-6">
-              <Link
-                to={`/profile/${blog.author._id}`}
-              >
+              <Link to={`/profile/${blog.author._id}`}>
                 {blog.author.imageUrl ? (
                   <img
                     src={blog.author.imageUrl}
@@ -111,52 +109,50 @@ const BlogDetails = () => {
                 )}
               </Link>
               <div>
-                <p className="text-lg font-semibold flex justify-start items-center gap-2">
+                <p className="text-sm sm:text-base font-semibold flex items-center gap-2">
                   {blog.author.name}
                 </p>
                 <div className="flex items-center gap-4">
-                  <p className="text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] text-sm">
+                  <p className="text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] text-xs sm:text-sm">
                     {publishedDate}
                   </p>
-                  <p className="text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] text-sm">
+                  <p className="text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] text-xs sm:text-sm">
                     {blog.readTime}
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="prose dark:prose-invert max-w-none px-4">
+            <div className="prose prose-sm sm:prose-base dark:prose-invert max-w-none px-1">
               {blog.content.map((item) => (
                 <div key={item._id}>
                   {item.type === 'text' && (
-                    <p className="text-lg leading-relaxed text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)] mb-4">
-                      {/* Convert URLs in text to clickable links */}
+                    <p className="text-base sm:text-lg leading-relaxed text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)] mb-4">
                       {convertUrlsToLinks(item.value, 'text-[var(--color-button-primary-light)] dark:text-[var(--color-button-primary-dark)] hover:underline')}
                     </p>
                   )}
 
                   {item.type === 'heading' && (
-                    <h2 className="text-3xl font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)] mb-5">
+                    <h2 className="text-xl sm:text-3xl font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)] mb-5">
                       {item.value}
                     </h2>
                   )}
 
                   {item.type === 'bold' && (
-                    <p className="text-lg font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)] mb-3">
+                    <p className="text-base sm:text-lg font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)] mb-3">
                       {item.value}
                     </p>
                   )}
 
                   {item.type === 'highlight' && (
-                    <span className="text-lg bg-[var(--color-accent-light)] dark:bg-[var(--color-accent-dark)] text-[var(--color-background-light)] dark:text-[var(--color-background-dark)] px-3 py-1 rounded-md inline-block mb-5">
+                    <span className="text-base sm:text-lg bg-[var(--color-accent-light)] dark:bg-[var(--color-accent-dark)] text-[var(--color-background-light)] dark:text-[var(--color-background-dark)] px-3 py-1 rounded-md inline-block mb-5">
                       {item.value}
                     </span>
                   )}
 
                   {item.type === 'code' && (
-                    <pre className="bg-[var(--color-surface-light)] dark:bg-[var(--color-surface-dark)] p-3 rounded-lg overflow-x-auto text-sm border border-[var(--color-border-light)] dark:border-[var(--color-border-dark)] shadow-sm mb-3">
-                      <code className="text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)] font-mono">
-                        {/* Convert URLs in code to clickable links */}
+                    <pre className="bg-[var(--color-surface-light)] dark:bg-[var(--color-surface-dark)] p-3 rounded-lg overflow-x-auto text-xs sm:text-sm border border-[var(--color-border-light)] dark:border-[var(--color-border-dark)] shadow-sm mb-3">
+                      <code className="font-mono text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)]">
                         {convertUrlsToLinks(item.value, 'text-[var(--color-button-primary-light)] dark:text-[var(--color-button-primary-dark)]')}
                       </code>
                     </pre>
@@ -190,5 +186,3 @@ const BlogDetails = () => {
 };
 
 export default BlogDetails;
-
-
