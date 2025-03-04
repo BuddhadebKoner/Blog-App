@@ -1,5 +1,6 @@
 import Blog from "../models/blogs.model.js";
 import { UserAuth } from "../models/user.model.js";
+import { deleteFromCloudinary } from "../utils/cloudinary.js";
 
 // get all blogs infinite scroll
 export const getBlogs = async (req, res) => {
@@ -93,7 +94,7 @@ export const createBlog = async (req, res) => {
          imageId
       } = req.body;
 
-      console.log("req.body", req.body);
+      // console.log("req.body", req.body);
 
       // Check if all required fields are present
       if (!author || !title || !videoLink || !readTime || !originalSlugParam || !content || !imageUrl || !imageId) {
@@ -262,21 +263,19 @@ export const deleteBlog = async (req, res) => {
    try {
       const { slugParam } = req.params;
 
-      // check if blog exists using slugParam
-      const isBlogExists = await Blog.findOne({ slugParam });
-      if (!isBlogExists) {
+      const res = await Blog.findOneAndDelete({ slugParam });
+      if (!res) {
          return res.status(404).json({
             success: false,
             message: "Blog not found.",
          });
       }
 
-      await Blog.findOneAndDelete({ slugParam });
-
-      return res.status(202).json({
-         success: true,
-         message: "Blog deleted successfully.",
-      });
+      // console.log("res", res);
+      // delete blog image from cloudinary
+      if (res.imageId) {
+         await deleteFromCloudinary(res.imageId);
+      };
 
    } catch (error) {
       return res.status(500).json({

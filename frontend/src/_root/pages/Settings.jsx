@@ -7,7 +7,7 @@ import { format } from 'date-fns';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import { Cloudinary } from '@cloudinary/url-gen';
-import { uploadImage } from '../../lib/api/user.api'; // Add this import
+import { uploadImage } from '../../lib/api/auth.api';
 
 // Get environment variables
 const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
@@ -113,17 +113,20 @@ const Settings = () => {
   // Upload to Cloudinary function
   const uploadToCloudinary = async (file) => {
     setUploadingImage(true);
+
+    const path = 'mern-blog/profiles'
+
     try {
-      const result = await uploadImage(file);
-      
+      const result = await uploadImage(file, path);
+
       if (!result.success) {
         throw new Error(result.message || 'Failed to upload image');
       }
-      
+
       // Store the Cloudinary URL and public_id
       setImageUrl(result.imageUrl);
       setImageId(result.imageId);
-      
+
       toast.success('Image uploaded successfully');
     } catch (error) {
       console.error('Cloudinary upload error:', error);

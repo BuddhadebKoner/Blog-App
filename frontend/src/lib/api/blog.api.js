@@ -1,13 +1,9 @@
 import axiosInstance from "../../config/config";
 
-// create blog
-export const createBlog = async (formData) => {
+// Create blog - Updated to send JSON instead of FormData
+export const createBlog = async (blogData) => {
    try {
-      const response = await axiosInstance.post('/api/blog/create-blog', formData, {
-         headers: {
-            'Content-Type': 'multipart/form-data',
-         },
-      });
+      const response = await axiosInstance.post('/api/blog/create-blog', blogData);
       return response.data;
    } catch (error) {
       console.error("Failed to create blog", error);
