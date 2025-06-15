@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
+import mongoose from "mongoose";
 import connectDB from "./src/config/db.js";
 import authRouter from "./src/routes/user.route.js"
 import blogRoute from "./src/routes/blog.route.js";
@@ -10,8 +11,19 @@ dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3000
-// connect to db
-connectDB();
+
+// Connect to DB only if not in Vercel serverless environment
+if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
+  connectDB();
+} else {
+  // For Vercel, connect on each request if not already connected
+  app.use(async (req, res, next) => {
+    if (mongoose.connection.readyState === 0) {
+      await connectDB();
+    }
+    next();
+  });
+}
 
 app.use(express.json());
 app.use(cookieParser());
@@ -47,7 +59,13 @@ app.use('/api/auth', authRouter)
 // for blogs
 app.use('/api/blog', blogRoute);
 
-app.listen(port, () => {
-  console.log(`server is running on PORT http://localhost:${port}/`);
-  console.log(`Allowed origins for CORS: ${allowedOrigins.join(', ')}`);
-});
+// Only start the server if not in Vercel environment
+if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
+  app.listen(port, () => {
+    console.log(`server is running on PORT http://localhost:${port}/`);
+    console.log(`Allowed origins for CORS: ${allowedOrigins.join(', ')}`);
+  });
+}
+
+// Export the Express API for Vercel
+export default app;
