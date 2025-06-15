@@ -31,7 +31,8 @@ app.use(cookieParser());
 const allowedOrigins = [
   process.env.CLIENT_URL?.replace(/\/$/, ''),
   'http://localhost:5173',
-  'http://192.168.31.100:5173'
+  'http://192.168.31.100:5173',
+  'https://res.cloudinary.com'
 ].filter(Boolean);
 
 app.use(cors({
@@ -47,8 +48,9 @@ app.use(cors({
     }
   },
   credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  allowedHeaders: ["Content-Type", "Authorization"]
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+  optionsSuccessStatus: 200
 }));
 
 
