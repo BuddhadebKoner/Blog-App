@@ -15,6 +15,20 @@ export const createBlog = async (blogData) => {
 };
 
 // update blog
+export const updateBlog = async (id, blogData) => {
+   try {
+      const response = await axiosInstance.put(`/api/blog/update-blog/${id}`, blogData);
+      return response.data;
+   } catch (error) {
+      console.error("Failed to update blog", error);
+      return {
+         success: false,
+         message: error.response?.data?.message || "Something went wrong",
+      };
+   }
+};
+
+// get blog by id
 export const getBlogById = async (id) => {
    try {
       const response = await axiosInstance.get(`/api/blog/get-blog-by-id/${id}`);

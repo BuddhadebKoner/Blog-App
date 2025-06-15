@@ -1,8 +1,9 @@
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from 'react-toastify';
 import { QUERY_KEYS } from "./QueryKeys";
 import { isAuthenticated, varifyEmail } from "../api/auth.api.js";
 import { getUser, getUserById, login, logOut, updateUser } from "../api/user.api.js";
-import { createBlog, deleteBlog, getAllBlogs, getAllBlogsByUserId, getBlogById, getRecentThreeBlogs } from "../api/blog.api.js";
+import { createBlog, deleteBlog, getAllBlogs, getAllBlogsByUserId, getBlogById, getRecentThreeBlogs, updateBlog } from "../api/blog.api.js";
 
 // varify email with otp 
 export const useVerifyEmail = () => {
@@ -145,6 +146,27 @@ export const useUpdateUser = () => {
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.GET_USER] });
     },
   });
+};
+
+// update blog
+export const useUpdateBlog = () => {
+   const queryClient = useQueryClient();
+
+   return useMutation({
+      mutationKey: [QUERY_KEYS.UPDATE_BLOG],
+      mutationFn: ({ slugParam, blogData }) => updateBlog(slugParam, blogData),
+      onSuccess: (data) => {
+         if (data.success) {
+            queryClient.invalidateQueries([QUERY_KEYS.GET_BLOGS]);
+            queryClient.invalidateQueries([QUERY_KEYS.GET_BLOG_BY_ID]);
+            queryClient.invalidateQueries([QUERY_KEYS.GET_ALL_BLOGS_BY_USER_ID]);
+            toast.success('Blog updated successfully!');
+         }
+      },
+      onError: (error) => {
+         toast.error(error.response?.data?.message || "Failed to update blog");
+      }
+   });
 };
 
 // delete blog

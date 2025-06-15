@@ -3,9 +3,11 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useDeleteBlog, useGetBlogById } from '../../lib/react-query/queriesAndMutation';
 import { useAuth } from '../../context/AuthContext';
 import BlogSidebarCard from '../../components/BlogSidebarCard';
-import { CircleUser, LoaderCircle, Trash } from 'lucide-react';
+import { CircleUser, LoaderCircle, Trash, Edit3 } from 'lucide-react';
 import { Helmet } from "react-helmet";
-import { convertUrlsToLinks } from '../../lib/utils.jsx';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import rehypeHighlight from 'rehype-highlight';
 
 const BlogDetails = () => {
   const { slugParam } = useParams();
@@ -46,10 +48,13 @@ const BlogDetails = () => {
 
   const handleDeleteBlog = () => {
     if (window.confirm('Are you sure you want to delete this blog?')) {
-      deleteBlog(slugParam);
-      navigate(-1);
-      // Ensure toast function is imported/defined accordingly
-      toast.success('Blog deleted successfully');
+      deleteBlog(slugParam, {
+        onSuccess: () => {
+          navigate(-1);
+          // You can add toast notification here if you have toast setup
+          console.log('Blog deleted successfully');
+        }
+      });
     }
   };
 
@@ -63,7 +68,7 @@ const BlogDetails = () => {
           <div className="flex justify-between items-center sm:items-center mb-3">
             <p className="text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] text-xs sm:text-base py-5">
               <Link
-                to="/blogs"
+                to="/blogs" 
                 className="underline text-[var(--color-accent-light)] dark:text-[var(--color-accent-dark)]"
               >
                 BLOGS
@@ -71,12 +76,20 @@ const BlogDetails = () => {
               {blog.title.length > 25 ? `${blog.title.slice(0, 20)}...` : blog.title}
             </p>
             {currentUser?._id === blog.author._id && (
-              <button
-                className="mt-2 sm:mt-0 p-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors cursor-pointer"
-                onClick={handleDeleteBlog}
-              >
-                <Trash />
-              </button>
+              <div className="flex gap-2">
+                <button
+                  className="mt-2 sm:mt-0 p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors cursor-pointer"
+                  onClick={() => navigate(`/update-blog/${slugParam}`)}
+                >
+                  <Edit3 />
+                </button>
+                <button
+                  className="mt-2 sm:mt-0 p-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors cursor-pointer"
+                  onClick={handleDeleteBlog}
+                >
+                  <Trash />
+                </button>
+              </div>
             )}
           </div>
 
@@ -117,48 +130,94 @@ const BlogDetails = () => {
                     {publishedDate}
                   </p>
                   <p className="text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] text-xs sm:text-sm">
-                    {blog.readTime}
+                    {blog.readTime} min read
                   </p>
                 </div>
               </div>
             </div>
 
             <div className="prose prose-sm sm:prose-base dark:prose-invert max-w-none px-1">
-              {blog.content.map((item) => (
-                <div key={item._id}>
-                  {item.type === 'text' && (
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                rehypePlugins={[rehypeHighlight]}
+                components={{
+                  // Custom styling for different markdown elements
+                  p: ({ children }) => (
                     <p className="text-base sm:text-lg leading-relaxed text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)] mb-4">
-                      {convertUrlsToLinks(item.value, 'text-[var(--color-button-primary-light)] dark:text-[var(--color-button-primary-dark)] hover:underline')}
+                      {children}
                     </p>
-                  )}
-
-                  {item.type === 'heading' && (
-                    <h2 className="text-xl sm:text-3xl font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)] mb-5">
-                      {item.value}
+                  ),
+                  h1: ({ children }) => (
+                    <h1 className="text-2xl sm:text-4xl font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)] mb-6 mt-8">
+                      {children}
+                    </h1>
+                  ),
+                  h2: ({ children }) => (
+                    <h2 className="text-xl sm:text-3xl font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)] mb-5 mt-6">
+                      {children}
                     </h2>
-                  )}
-
-                  {item.type === 'bold' && (
-                    <p className="text-base sm:text-lg font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)] mb-3">
-                      {item.value}
-                    </p>
-                  )}
-
-                  {item.type === 'highlight' && (
-                    <span className="text-base sm:text-lg bg-[var(--color-accent-light)] dark:bg-[var(--color-accent-dark)] text-[var(--color-background-light)] dark:text-[var(--color-background-dark)] px-3 py-1 rounded-md inline-block mb-5">
-                      {item.value}
-                    </span>
-                  )}
-
-                  {item.type === 'code' && (
-                    <pre className="bg-[var(--color-surface-light)] dark:bg-[var(--color-surface-dark)] p-3 rounded-lg overflow-x-auto text-xs sm:text-sm border border-[var(--color-border-light)] dark:border-[var(--color-border-dark)] shadow-sm mb-3">
+                  ),
+                  h3: ({ children }) => (
+                    <h3 className="text-lg sm:text-2xl font-bold text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)] mb-4 mt-5">
+                      {children}
+                    </h3>
+                  ),
+                  strong: ({ children }) => (
+                    <strong className="font-semibold text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)]">
+                      {children}
+                    </strong>
+                  ),
+                  code: ({ inline, children }) => {
+                    if (inline) {
+                      return (
+                        <code className="bg-[var(--color-surface-light)] dark:bg-[var(--color-surface-dark)] px-2 py-1 rounded text-sm font-mono text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)]">
+                          {children}
+                        </code>
+                      );
+                    }
+                    return (
                       <code className="font-mono text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)]">
-                        {convertUrlsToLinks(item.value, 'text-[var(--color-button-primary-light)] dark:text-[var(--color-button-primary-dark)]')}
+                        {children}
                       </code>
+                    );
+                  },
+                  pre: ({ children }) => (
+                    <pre className="bg-[var(--color-surface-light)] dark:bg-[var(--color-surface-dark)] p-4 rounded-lg overflow-x-auto text-xs sm:text-sm border border-[var(--color-border-light)] dark:border-[var(--color-border-dark)] shadow-sm mb-4">
+                      {children}
                     </pre>
-                  )}
-                </div>
-              ))}
+                  ),
+                  blockquote: ({ children }) => (
+                    <blockquote className="border-l-4 border-[var(--color-accent-light)] dark:border-[var(--color-accent-dark)] pl-4 italic text-[var(--color-text-secondary-light)] dark:text-[var(--color-text-secondary-dark)] mb-4">
+                      {children}
+                    </blockquote>
+                  ),
+                  a: ({ href, children }) => (
+                    <a 
+                      href={href} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-[var(--color-button-primary-light)] dark:text-[var(--color-button-primary-dark)] hover:underline"
+                    >
+                      {children}
+                    </a>
+                  ),
+                  ul: ({ children }) => (
+                    <ul className="list-disc list-inside mb-4 text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)]">
+                      {children}
+                    </ul>
+                  ),
+                  ol: ({ children }) => (
+                    <ol className="list-decimal list-inside mb-4 text-[var(--color-text-primary-light)] dark:text-[var(--color-text-primary-dark)]">
+                      {children}
+                    </ol>
+                  ),
+                  li: ({ children }) => (
+                    <li className="mb-2">{children}</li>
+                  ),
+                }}
+              >
+                {blog.content}
+              </ReactMarkdown>
             </div>
 
             {blog.videoLink && getYouTubeID(blog.videoLink) && (

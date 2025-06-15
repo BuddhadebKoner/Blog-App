@@ -11,6 +11,7 @@ export const QUERY_KEYS = {
    // blog
    GET_BLOGS: "get-blogs",
    CREATE_BLOG: "create-blog",
+   UPDATE_BLOG: "update-blog",
    GET_ALL_BLOGS_BY_USER_ID: "get-all-blogs-by-user-id",
    GET_ALL_BLOGS: "get-all-blogs",
    GET_BLOG_BY_ID: "get-blog-by-id",

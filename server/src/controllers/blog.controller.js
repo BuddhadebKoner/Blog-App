@@ -118,20 +118,11 @@ export const createBlog = async (req, res) => {
          });
       }
 
-      // Parse and validate content
-      let parsedContent;
-      try {
-         parsedContent = typeof content === 'string' ? JSON.parse(content) : content;
-         if (!Array.isArray(parsedContent) || parsedContent.some(item => !item.type || !item.value)) {
-            return res.status(400).json({
-               success: false,
-               message: "Invalid content format."
-            });
-         }
-      } catch (err) {
+      // Validate content
+      if (!content || content.trim() === '') {
          return res.status(400).json({
             success: false,
-            message: "Content must be a valid JSON array."
+            message: "Blog content is required."
          });
       }
 
@@ -164,7 +155,8 @@ export const createBlog = async (req, res) => {
          videoLink,
          readTime,
          slugParam,
-         content: parsedContent,
+         content: content.trim(),
+         contentType: 'markdown',
          isPublished: true,
          publishedAt
       });
@@ -210,23 +202,12 @@ export const updateBlog = async (req, res) => {
          });
       }
 
-      // Parse content if it's sent as a string
-      let parsedContent;
-      if (content) {
-         try {
-            parsedContent = typeof content === 'string' ? JSON.parse(content) : content;
-            if (!Array.isArray(parsedContent) || parsedContent.some(item => !item.type || !item.value)) {
-               return res.status(400).json({
-                  success: false,
-                  message: "Invalid content format."
-               });
-            }
-         } catch (err) {
-            return res.status(400).json({
-               success: false,
-               message: "Content must be a valid JSON array."
-            });
-         }
+      // Validate content if provided
+      if (content && content.trim() === '') {
+         return res.status(400).json({
+            success: false,
+            message: "Blog content cannot be empty."
+         });
       }
 
       // Update the blog with new data
@@ -239,7 +220,7 @@ export const updateBlog = async (req, res) => {
             slugParam: willUpdateSlugParams || slugParam,
             videoLink: videoLink || isBlogExists.videoLink,
             readTime: readTime || isBlogExists.readTime,
-            content: parsedContent || isBlogExists.content,
+            content: content ? content.trim() : isBlogExists.content,
          },
          { new: true }
       );
@@ -263,19 +244,23 @@ export const deleteBlog = async (req, res) => {
    try {
       const { slugParam } = req.params;
 
-      const res = await Blog.findOneAndDelete({ slugParam });
-      if (!res) {
+      const deletedBlog = await Blog.findOneAndDelete({ slugParam });
+      if (!deletedBlog) {
          return res.status(404).json({
             success: false,
             message: "Blog not found.",
          });
       }
 
-      // console.log("res", res);
       // delete blog image from cloudinary
-      if (res.imageId) {
-         await deleteFromCloudinary(res.imageId);
-      };
+      if (deletedBlog.imageId) {
+         await deleteFromCloudinary(deletedBlog.imageId);
+      }
+
+      return res.status(200).json({
+         success: true,
+         message: "Blog deleted successfully.",
+      });
 
    } catch (error) {
       return res.status(500).json({

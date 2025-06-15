@@ -39,10 +39,16 @@ const blogSchema = new mongoose.Schema({
       type: Date,
       default: null,
    },
-   content: [{
-      type: { type: String, enum: ["text", "code", "heading", "bold", "highlight"], required: true },
-      value: { type: String, required: true },
-   }],
+   content: {
+      type: String,
+      required: true,
+      trim: true,
+   },
+   contentType: {
+      type: String,
+      enum: ['markdown', 'html'],
+      default: 'markdown',
+   },
 }, { timestamps: true });
 
 const Blog = mongoose.model('Blog', blogSchema);
