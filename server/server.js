@@ -71,11 +71,16 @@ const initializeDB = async () => {
   try {
     await connectDB();
     isConnected = true;
-    console.log('Database connected successfully');
+    if (!isProduction) {
+      console.log('Database connected successfully');
+    }
   } catch (error) {
     console.error('Database connection failed:', error);
     isConnected = false;
-    throw error;
+    // In production, don't throw to prevent function crashes
+    if (!isProduction) {
+      throw error;
+    }
   }
 };
 
@@ -114,9 +119,11 @@ const corsOptions = {
     if (allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      console.log(`🚫 Origin ${origin} not allowed by CORS`);
-      console.log(`✅ Allowed origins: ${allowedOrigins.join(', ')}`);
-      // In production, log but don't block - Vercel can be strict
+      if (!isProduction) {
+        console.log(`🚫 Origin ${origin} not allowed by CORS`);
+        console.log(`✅ Allowed origins: ${allowedOrigins.join(', ')}`);
+      }
+      // In production, be more permissive for serverless
       if (isProduction) {
         callback(null, true);
       } else {
@@ -186,15 +193,17 @@ app.use('/api/blog', blogRoute);
 
 // 404 handler for undefined routes
 app.use('*', (req, res) => {
-  res.status(404).json({
-    success: false,
+    res.status(404).json({
+      success: false,
     message: `Route ${req.originalUrl} not found`
   });
 });
 
 // Global error handler
 app.use((error, req, res, next) => {
-  console.error('💥 Error occurred:', error);
+  if (!isProduction) {
+    console.error('💥 Error occurred:', error);
+  }
 
   // CORS errors
   if (error.message === 'Not allowed by CORS') {

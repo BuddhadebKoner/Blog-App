@@ -1,20 +1,39 @@
 {
    "version": 2,
+   "functions": {
+      "server.js": {
+         "maxDuration": 30
+      }
+   },
    "builds": [
       {
          "src": "server.js",
-         "use": "@vercel/node",
+         "use": "@vercel/node@3",
          "config": {
+            "maxLambdaSize": "50mb",
             "includeFiles": [
-               "dist/**"
+               "src/**",
+               "public/**"
             ]
          }
       }
    ],
    "routes": [
       {
+         "src": "/health",
+         "dest": "server.js"
+      },
+      {
+         "src": "/api/(.*)",
+         "dest": "server.js"
+      },
+      {
          "src": "/(.*)",
          "dest": "server.js"
       }
-   ]
-}
+   ],
+   "env": {
+      "NODE_ENV": "production"
+   },
+   "regions": ["iad1"]
+}  
