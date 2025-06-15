@@ -1,9 +1,77 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { createBlog } from '../lib/api/blog.api';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { uploadImage } from '../lib/api/auth.api';
+import { useEditor, EditorContent } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
+import Highlight from '@tiptap/extension-highlight';
+import Placeholder from '@tiptap/extension-placeholder';
+import Heading from '@tiptap/extension-heading';
+import Bold from '@tiptap/extension-bold';
+
+// TipTap Toolbar Component
+const MenuBar = ({ editor }) => {
+    if (!editor) {
+        return null;
+    }
+
+    return (
+        <div className="flex flex-wrap gap-2 p-2 border-b border-gray-300 dark:border-gray-600 mb-2">
+            <button
+                onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+                className={`px-2 py-1 rounded text-xs ${editor.isActive('heading', { level: 2 }) ? 'bg-blue-500 text-white' : 'bg-gray-200 dark:bg-gray-700'}`}
+            >
+                H2
+            </button>
+            <button
+                onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+                className={`px-2 py-1 rounded text-xs ${editor.isActive('heading', { level: 3 }) ? 'bg-blue-500 text-white' : 'bg-gray-200 dark:bg-gray-700'}`}
+            >
+                H3
+            </button>
+            <button
+                onClick={() => editor.chain().focus().toggleBold().run()}
+                className={`px-2 py-1 rounded text-xs ${editor.isActive('bold') ? 'bg-blue-500 text-white' : 'bg-gray-200 dark:bg-gray-700'}`}
+            >
+                Bold
+            </button>
+            <button
+                onClick={() => editor.chain().focus().toggleHighlight().run()}
+                className={`px-2 py-1 rounded text-xs ${editor.isActive('highlight') ? 'bg-blue-500 text-white' : 'bg-gray-200 dark:bg-gray-700'}`}
+            >
+                Highlight
+            </button>
+            <button
+                onClick={() => editor.chain().focus().toggleCodeBlock().run()}
+                className={`px-2 py-1 rounded text-xs ${editor.isActive('codeBlock') ? 'bg-blue-500 text-white' : 'bg-gray-200 dark:bg-gray-700'}`}
+            >
+                Code
+            </button>
+            <button
+                onClick={() => editor.chain().focus().setParagraph().run()}
+                className={`px-2 py-1 rounded text-xs ${editor.isActive('paragraph') ? 'bg-blue-500 text-white' : 'bg-gray-200 dark:bg-gray-700'}`}
+            >
+                Text
+            </button>
+            <button
+                onClick={() => editor.chain().focus().undo().run()}
+                disabled={!editor.can().undo()}
+                className="px-2 py-1 rounded text-xs bg-gray-200 dark:bg-gray-700 disabled:opacity-50"
+            >
+                Undo
+            </button>
+            <button
+                onClick={() => editor.chain().focus().redo().run()}
+                disabled={!editor.can().redo()}
+                className="px-2 py-1 rounded text-xs bg-gray-200 dark:bg-gray-700 disabled:opacity-50"
+            >
+                Redo
+            </button>
+        </div>
+    );
+};
 
 const CreateBlogForm = ({
     title,
@@ -28,46 +96,42 @@ const CreateBlogForm = ({
     const [imageId, setImageId] = useState('');
     const [previewImageUrl, setPreviewImageUrl] = useState('');
     const fileInputRef = useRef(null);
+    const [editorContent, setEditorContent] = useState('');
+    const [editorError, setEditorError] = useState(null);
 
     const navigate = useNavigate();
 
-    const addContentBlock = () => {
-        setContent([
-            ...content,
-            { tempId: Date.now().toString(), type: '', value: '' },
-        ]);
-    };
-
-    const handleContentTypeChange = (index, type) => {
-        const updated = [...content];
-        updated[index].type = type;
-        setContent(updated);
-    };
-
-    const handleContentValueChange = (index, value) => {
-        const updated = [...content];
-        updated[index].value = value;
-        setContent(updated);
-    };
-
-    const removeContentBlock = (index) => {
-        const updated = content.filter((_, i) => i !== index);
-        setContent(updated);
-    };
+    // Initialize TipTap Editor
+    const editor = useEditor({
+        extensions: [
+            StarterKit,
+            Highlight,
+            Heading.configure({
+                levels: [2, 3],
+            }),
+            Bold,
+            Placeholder.configure({
+                placeholder: 'Write your blog content here...',
+            }),
+        ],
+        content: '',
+        onUpdate: ({ editor }) => {
+            setEditorContent(editor.getHTML());
+            // Clear error when user types
+            if (editorError) setEditorError(null);
+        },
+    });
 
     const validateForm = () => {
         const newErrors = {};
         if (!title.trim()) newErrors.title = 'Title is required';
         if (!slugParam.trim()) newErrors.slugParam = 'Slug is required';
 
-        content.forEach((block, index) => {
-            if (!block.type) {
-                newErrors[`contentType-${index}`] = 'Content type is required';
-            }
-            if (!block.value.trim()) {
-                newErrors[`contentValue-${index}`] = 'Content value is required';
-            }
-        });
+        // Validate editor content
+        if (!editorContent.trim()) {
+            setEditorError('Blog content is required');
+            return false;
+        }
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -132,6 +196,7 @@ const CreateBlogForm = ({
     const handleSubmit = async (e) => {
         e.preventDefault();
         setServerError(null);
+        setEditorError(null);
 
         if (!validateForm()) return;
 
@@ -152,21 +217,16 @@ const CreateBlogForm = ({
         }
 
         try {
-            // Remove temporary keys from content blocks
-            const sanitizedContent = content.map(({ tempId, _id, ...rest }) => rest);
-
             const blogData = {
                 author: currentUser._id,
                 title,
                 videoLink,
                 readTime,
                 slugParam,
-                content: JSON.stringify(sanitizedContent),
+                content: editorContent, // Use TipTap editor content
                 imageUrl,
                 imageId,
             };
-
-            // console.log('Final Blog Data:', blogData);
 
             const res = await createBlog(blogData);
 
@@ -175,6 +235,9 @@ const CreateBlogForm = ({
                 navigate(`/blog/${res.blog.slugParam}`);
                 // Reset or clear fields as needed
                 setTitle('');
+                if (editor) {
+                    editor.commands.setContent('');
+                }
                 // Optionally reset other form states
             } else {
                 toast.error(res.message || 'Something went wrong');
@@ -201,7 +264,7 @@ const CreateBlogForm = ({
                     Create New Blog
                 </h1>
             </div>
-            <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4 overflow-auto">
+            <div className="space-y-3 sm:space-y-4 overflow-auto">
                 {serverError && (
                     <div className="bg-red-100 border border-red-400 text-red-700 px-3 py-2 sm:px-4 sm:py-3 rounded text-sm">
                         {serverError}
@@ -237,6 +300,15 @@ const CreateBlogForm = ({
                     />
                     {uploadingImage && (
                         <p className="text-blue-500 text-xs sm:text-sm mt-1">Uploading image...</p>
+                    )}
+                    {previewImageUrl && (
+                        <div className="mt-2">
+                            <img
+                                src={previewImageUrl}
+                                alt="Preview"
+                                className="h-32 w-auto object-cover rounded-md"
+                            />
+                        </div>
                     )}
                 </div>
                 {/* Video Link */}
@@ -283,79 +355,28 @@ const CreateBlogForm = ({
                         <p className="text-red-500 text-xs sm:text-sm mt-1">{errors.slugParam}</p>
                     )}
                 </div>
-                {/* Content Blocks */}
-                <div className="space-y-3 sm:space-y-4">
-                    <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 sm:mb-2">
-                        Content Blocks *
+
+                {/* TipTap Editor */}
+                <div className="px-0 sm:px-1">
+                    <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Content *
                     </label>
-                    {content.map((block, index) => (
-                        <div
-                            key={block.tempId}
-                            className="mb-3 sm:mb-4 p-3 sm:p-4 border rounded-md dark:border-gray-600"
-                        >
-                            <div className="mb-2">
-                                <select
-                                    value={block.type}
-                                    onChange={(e) => handleContentTypeChange(index, e.target.value)}
-                                    disabled={loading}
-                                    className={`w-full rounded-md border ${errors[`contentType-${index}`]
-                                        ? 'border-red-500'
-                                        : 'border-gray-300 dark:border-gray-600'
-                                        } p-1.5 sm:p-2 text-sm bg-white dark:bg-gray-800`}
-                                >
-                                    <option value="">Select Content Type</option>
-                                    <option value="heading">Heading</option>
-                                    <option value="text">Text</option>
-                                    <option value="code">Code</option>
-                                    <option value="bold">Bold</option>
-                                    <option value="highlight">Highlight</option>
-                                </select>
-                                {errors[`contentType-${index}`] && (
-                                    <p className="text-red-500 text-xs sm:text-sm mt-1">
-                                        {errors[`contentType-${index}`]}
-                                    </p>
-                                )}
-                            </div>
-                            <div className="mb-2">
-                                <textarea
-                                    value={block.value}
-                                    onChange={(e) => handleContentValueChange(index, e.target.value)}
-                                    disabled={loading}
-                                    rows={3}
-                                    placeholder="Enter content..."
-                                    className={`w-full rounded-md border ${errors[`contentValue-${index}`]
-                                        ? 'border-red-500'
-                                        : 'border-gray-300 dark:border-gray-600'
-                                        } p-1.5 sm:p-2 text-sm bg-white dark:bg-gray-800`}
-                                />
-                                {errors[`contentValue-${index}`] && (
-                                    <p className="text-red-500 text-xs sm:text-sm mt-1">
-                                        {errors[`contentValue-${index}`]}
-                                    </p>
-                                )}
-                            </div>
-                            <button
-                                type="button"
-                                onClick={() => removeContentBlock(index)}
-                                disabled={loading}
-                                className="text-red-500 text-xs sm:text-sm hover:text-red-700"
-                            >
-                                Remove Block
-                            </button>
-                        </div>
-                    ))}
-                    <button
-                        type="button"
-                        onClick={addContentBlock}
-                        disabled={loading}
-                        className="w-full py-1.5 sm:py-2 mt-2 text-xs sm:text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-500 border border-dashed border-gray-300 dark:border-gray-600 rounded-md"
-                    >
-                        + Add Content Block
-                    </button>
+                    <div className={`border ${editorError ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'} rounded-md overflow-hidden bg-white dark:bg-gray-800`}>
+                        <MenuBar editor={editor} />
+                        <EditorContent
+                            editor={editor}
+                            className="min-h-[300px] p-3 prose dark:prose-invert max-w-none"
+                        />
+                    </div>
+                    {editorError && (
+                        <p className="text-red-500 text-xs sm:text-sm mt-1">{editorError}</p>
+                    )}
                 </div>
+
                 {/* Form Actions */}
                 <div className="flex justify-end space-x-3 sm:space-x-4 mt-4 sm:mt-6">
                     <button
+                        onClick={handleSubmit}
                         type="submit"
                         disabled={loading || uploadingImage}
                         className={`px-3 sm:px-4 py-1.5 sm:py-2 bg-green-500 dark:bg-green-400 text-white rounded-lg transition duration-300 text-sm ${loading || uploadingImage
@@ -366,7 +387,7 @@ const CreateBlogForm = ({
                         {loading ? 'Saving...' : 'Save Blog'}
                     </button>
                 </div>
-            </form>
+            </div>
         </div>
     );
 };
