@@ -1,24 +1,20 @@
 {
    "version": 2,
-   "name": "blog-app-server",
    "builds": [
       {
          "src": "server.js",
-         "use": "@vercel/node"
+         "use": "@vercel/node",
+         "config": {
+            "includeFiles": [
+               "dist/**"
+            ]
+         }
       }
    ],
    "routes": [
       {
          "src": "/(.*)",
-         "dest": "/server.js"
+         "dest": "server.js"
       }
-   ],
-   "functions": {
-      "server.js": {
-         "maxDuration": 30
-      }
-   },
-   "env": {
-      "NODE_ENV": "production"
-   }
+   ]
 }
