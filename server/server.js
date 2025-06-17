@@ -13,6 +13,17 @@ import blogRoute from "./src/routes/blog.route.js";
 
 dotenv.config();
 
+// Validate critical environment variables
+const requiredEnvVars = ['MONGODB_URI'];
+const missingEnvVars = requiredEnvVars.filter(envVar => !process.env[envVar]);
+
+if (missingEnvVars.length > 0) {
+  console.error('Missing required environment variables:', missingEnvVars);
+  if (!process.env.VERCEL) {
+    process.exit(1);
+  }
+}
+
 const app = express();
 const port = process.env.PORT || 3000;
 const isDevelopment = process.env.NODE_ENV === 'development';
@@ -64,8 +75,8 @@ app.use(mongoSanitize());
 let isConnected = false;
 
 const initializeDB = async () => {
-  if (isConnected || mongoose.connection.readyState === 1) {
-    return;
+  if (mongoose.connection.readyState === 1) {
+    return true;
   }
   
   try {
@@ -74,13 +85,19 @@ const initializeDB = async () => {
     if (!isProduction) {
       console.log('Database connected successfully');
     }
+    return true;
   } catch (error) {
     console.error('Database connection failed:', error);
     isConnected = false;
-    // In production, don't throw to prevent function crashes
+    // In serverless, throw error to prevent function execution without DB
+    if (process.env.VERCEL) {
+      throw new Error('Database connection failed');
+    }
+    // In development, don't throw to prevent server crashes
     if (!isProduction) {
       throw error;
     }
+    return false;
   }
 };
 
@@ -106,26 +123,28 @@ if (process.env.PRODUCTION_DOMAINS) {
 
 const corsOptions = {
   origin: function (origin, callback) {
-    // Allow requests with no origin in development
+    // Allow requests with no origin in development (e.g., mobile apps, Postman)
     if (!origin && isDevelopment) {
       return callback(null, true);
     }
     
-    // For serverless functions, be more permissive with origins
-    if (!origin && isProduction) {
-      return callback(null, true); // Allow serverless function calls
+    // For Vercel serverless functions, allow no origin
+    if (!origin && process.env.VERCEL) {
+      return callback(null, true);
     }
     
     if (allowedOrigins.includes(origin)) {
-      callback(null, true);
+      return callback(null, true);
     } else {
       if (!isProduction) {
         console.log(`🚫 Origin ${origin} not allowed by CORS`);
         console.log(`✅ Allowed origins: ${allowedOrigins.join(', ')}`);
       }
-      // In production, be more permissive for serverless
-      if (isProduction) {
-        callback(null, true);
+      // In production, be strict with CORS unless it's a serverless function call
+      if (isProduction && process.env.VERCEL && !origin) {
+        return callback(null, true);
+      } else if (isProduction) {
+        return callback(new Error('Not allowed by CORS'));
       } else {
         callback(new Error('Not allowed by CORS'));
       }
@@ -153,11 +172,22 @@ app.options('*', cors(corsOptions));
 // Initialize DB connection for each request in serverless
 app.use(async (req, res, next) => {
   try {
-    await initializeDB();
+    const connected = await initializeDB();
+    if (!connected && process.env.VERCEL) {
+      return res.status(500).json({
+        success: false,
+        message: 'Database connection failed'
+      });
+    }
     next();
   } catch (error) {
     console.error('Database connection error:', error);
-    // Don't fail the request, just log the error
+    if (process.env.VERCEL) {
+      return res.status(500).json({
+        success: false,
+        message: 'Database connection failed'
+      });
+    }
     next();
   }
 });

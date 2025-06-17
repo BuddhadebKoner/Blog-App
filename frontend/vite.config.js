@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
+import react from '@vitejs/plugin-react'
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -8,9 +8,14 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
-  // serve to wifi local network
+  build: {
+    outDir: 'dist',
+    sourcemap: false,
+  },
   server: {
-    host: true,
-    port: 5173,
-  }
+    historyApiFallback: true,
+  },
+  preview: {
+    historyApiFallback: true,
+  },
 })
