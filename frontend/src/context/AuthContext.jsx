@@ -24,8 +24,12 @@ export const AuthProvider = ({ children }) => {
             isRunning: false,
             message: "Server is currently unavailable. Please check if the server is running."
          });
+         setIsAuthenticated(false);
+         setCurrentUser(null);
       } else if (isAuthenticatedData) {
          // We got a response, so the server is running
+         setServerStatus({ isRunning: true, message: null });
+         
          if (isAuthenticatedData.success) {
             setCurrentUser(isAuthenticatedData.data);
             setIsAuthenticated(true);
@@ -33,8 +37,6 @@ export const AuthProvider = ({ children }) => {
             setIsAuthenticated(false);
             setCurrentUser(null);
          }
-         // Since we got a response (even an error response), the server is running
-         setServerStatus({ isRunning: true, message: null });
       }
    }, [isAuthenticatedData, isAuthenticatedError]);
 

@@ -1,9 +1,20 @@
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from 'react-toastify';
 import { QUERY_KEYS } from "./QueryKeys";
-import { isAuthenticated, varifyEmail } from "../api/auth.api.js";
+import { isAuthenticated, sendVerifyOtp, varifyEmail } from "../api/auth.api.js";
 import { getUser, getUserById, login, logOut, updateUser } from "../api/user.api.js";
 import { createBlog, deleteBlog, getAllBlogs, getAllBlogsByUserId, getBlogById, getRecentThreeBlogs, updateBlog } from "../api/blog.api.js";
+
+// send verify otp
+export const useSendVerifyOtp = () => {
+   return useMutation({
+      mutationKey: [QUERY_KEYS.SEND_VERIFY_OTP],
+      mutationFn: sendVerifyOtp,
+      onError: (error) => {
+         toast.error(error.message || "Failed to send verification OTP");
+      }
+   });
+};
 
 // varify email with otp 
 export const useVerifyEmail = () => {

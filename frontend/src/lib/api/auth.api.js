@@ -1,6 +1,19 @@
 import axiosInstance from "../../config/config";
 
 // send verify otp
+export const sendVerifyOtp = async ({ userID }) => {
+   if (!userID) {
+      throw new Error("User ID is required!");
+   }
+
+   try {
+      const response = await axiosInstance.post("/api/auth/send-verify-otp", { userID });
+      return response.data;
+   } catch (error) {
+      throw new Error(error.response?.data?.message || "Something went wrong");
+   }
+};
+
 // verify email
 export const varifyEmail = async ({ userID, otp }) => {
    if (!userID || !otp) {
@@ -29,7 +42,15 @@ export const isAuthenticated = async () => {
          throw error;
       }
 
-      // For other errors (like 401, 500, etc.), return a formatted response
+      // For authentication errors (401), return unsuccessful response
+      if (error.response?.status === 401) {
+         return {
+            success: false,
+            message: error.response?.data?.message || "Not authenticated"
+         };
+      }
+
+      // For other errors (like 500, etc.), return a formatted response
       return {
          success: false,
          message: error.response?.data?.message || "Authentication failed"

@@ -311,25 +311,18 @@ export const verifyEmail = async (req, res) => {
 
 export const isUserAuthenticated = async (req, res) => {
    try {
-
+      // userID is automatically set by userAuth middleware from JWT token
       const { userID } = req.body;
-
-      if (!userID) {
-         return res.status(400).json({
-            success: false,
-            message: "User ID is required."
-         });
-      }
 
       const user = await UserAuth.findById(userID)
          .select("-password -otp -otpExpires -resetOtp -resetOtpExpires -blogs");
 
       if (!user) {
-         return res.status(400).json({
+         return res.status(404).json({
             success: false,
             message: "User not found."
          });
-      };
+      }
 
       return res.status(200).json({
          success: true,
@@ -337,6 +330,7 @@ export const isUserAuthenticated = async (req, res) => {
          data: user
       });
    } catch (error) {
+      console.error("isUserAuthenticated error:", error);
       return res.status(500).json({
          success: false,
          message: "Internal Server Error"

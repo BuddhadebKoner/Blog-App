@@ -1,6 +1,7 @@
 export const QUERY_KEYS = {
    // AUTH
    VERIFY_EMAIL: "verify-email",
+   SEND_VERIFY_OTP: "send-verify-otp",
    IS_AUTHENTICATED: "is-authenticated",
    LOGOUT: "logout",
    LOGIN: "login",
