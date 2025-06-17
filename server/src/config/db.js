@@ -16,9 +16,6 @@ const connectDB = async () => {
          process.env.MONGODB_URI,
          {
             bufferCommands: false,
-            bufferMaxEntries: 0,
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
          }
       );
       
